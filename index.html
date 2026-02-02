@@ -387,8 +387,10 @@
                 </div>
             </div>
             <div
-                style="text-align: center; margin-top: 3rem; border-top: 1px solid #333; padding-top: 1rem; font-size: 0.8rem; color: #888;">
-                &copy; 2026 Petopia. All rights reserved.
+                style="text-align: center; margin-top: 3rem; border-top: 1px solid #333; padding-top: 1rem; font-size: 0.8rem; color: #888; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                <span>&copy; 2026 Petopia. All rights reserved.</span>
+                <span
+                    style="background: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">v2.1.1-deployed</span>
             </div>
         </div>
     </footer>
@@ -403,33 +405,29 @@
 
         // Auth Navigation Sync
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Nav version: 2.1.0');
+            console.log('Nav version: 2.1.1');
             const authLinks = document.querySelector('.auth-links');
             const authMobile = document.getElementById('auth-mobile');
             const token = localStorage.getItem('token');
             const role = localStorage.getItem('userRole');
 
             if (token) {
-                // Desktop
+                const profileLinks = `
+                    <a href="profile.html">Profile</a>
+                    ${role === 'admin' ? ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>` : ''}
+                    <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>
+                `;
+
                 if (authLinks) {
-                    let html = `<a href="profile.html">Profile</a>`;
-                    if (role === 'admin') {
-                        html += ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>`;
-                    }
-                    html += ` <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>`;
-                    authLinks.innerHTML = html;
+                    authLinks.innerHTML = profileLinks;
                 }
 
-                // Mobile
                 if (authMobile) {
                     authMobile.style.display = 'block';
-                    let html = `<a href="profile.html">Profile</a>`;
-                    if (role === 'admin') {
-                        html += ` | <a href="admin.html">Admin Panel</a>`;
-                    }
-                    html += ` | <a href="#" onclick="handleLogout()">Logout</a>`;
-                    authMobile.innerHTML = html;
+                    authMobile.innerHTML = profileLinks.replace(/\|/g, '<span style="color:#444">|</span>');
                 }
+            } else {
+                console.log('No token found in localStorage');
             }
         });
 
