@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Services & Pricing - Petopia</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .service-type-header {
@@ -39,48 +39,43 @@
             margin-bottom: 2rem;
         }
     </style>
+    <script src="/api-config.js"></script>
     <script>
         function toggleMenu() {
             const navLinks = document.getElementById('navLinks');
             navLinks.classList.toggle('active');
         }
 
+        function handleLogout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+
         // Auth Navigation Sync
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Nav version: 2.1.0');
+            console.log('Nav version: 2.1.1');
             const authLinks = document.querySelector('.auth-links');
             const authMobile = document.getElementById('auth-mobile');
             const token = localStorage.getItem('token');
             const role = localStorage.getItem('userRole');
 
             if (token) {
-                // Desktop
+                const profileLinks = `
+                    <a href="profile.html">Profile</a>
+                    ${role === 'admin' ? ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>` : ''}
+                    <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>
+                `;
+
                 if (authLinks) {
-                    let html = `<a href="profile.html">Profile</a>`;
-                    if (role === 'admin') {
-                        html += ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>`;
-                    }
-                    html += ` <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>`;
-                    authLinks.innerHTML = html;
+                    authLinks.innerHTML = profileLinks;
                 }
 
-                // Mobile
                 if (authMobile) {
                     authMobile.style.display = 'block';
-                    let html = `<a href="profile.html">Profile</a>`;
-                    if (role === 'admin') {
-                        html += ` | <a href="admin.html">Admin Panel</a>`;
-                    }
-                    html += ` | <a href="#" onclick="handleLogout()">Logout</a>`;
-                    authMobile.innerHTML = html;
+                    authMobile.innerHTML = profileLinks.replace(/\|/g, '<span style="color:#444">|</span>');
                 }
             }
         });
-
-        function handleLogout() {
-            localStorage.clear();
-            window.location.reload();
-        }
     </script>
 </head>
 
@@ -89,8 +84,8 @@
     <header>
         <div class="container">
             <nav class="navbar">
-                <a href="index.html" class="logo">
-                    <img src="assets/logo-white.png" alt="Petopia Logo">
+                <a href="/index.html" class="logo">
+                    <img src="/assets/logo-white.png" alt="Petopia Logo">
                 </a>
                 <ul class="nav-links">
                     <li><a href="index.html#why-petopia">Why Petopia</a></li>

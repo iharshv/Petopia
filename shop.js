@@ -137,6 +137,7 @@ const products = [
         weight: "250ml",
         price: 349,
         mrp: 399,
+        image: "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&w=500&q=60",
         description: "Effective protection against ticks and fleas."
     }
 ];
