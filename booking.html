@@ -237,6 +237,19 @@
 
             const apiUrl = (window.API_BASE_URL || '') + '/api/booking';
 
+            const phoneInput = document.getElementById('phone');
+            let phone = phoneInput.value.trim();
+            if (phone && !phone.startsWith('+')) {
+                // If it's a 10-digit number without prefix, add +91
+                if (phone.length === 10) {
+                    phone = '+91' + phone;
+                } else if (!phone.startsWith('91')) {
+                    phone = '+91' + phone;
+                } else {
+                    phone = '+' + phone;
+                }
+            }
+
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -248,7 +261,7 @@
                         service: document.getElementById('service').value,
                         date: document.getElementById('date').value,
                         time: document.getElementById('time').value,
-                        phone: document.getElementById('phone').value,
+                        phone: phone,
                         email: localStorage.getItem('userEmail') || '',
                         notes: document.getElementById('message').value
                     })

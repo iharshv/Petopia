@@ -88,8 +88,16 @@
                         return;
                     }
 
-                    submitBtn.textContent = 'Creating Account...';
-                    submitBtn.disabled = true;
+                    let phone = document.getElementById('phone').value.trim();
+                    if (phone && !phone.startsWith('+')) {
+                        if (phone.length === 10) {
+                            phone = '+91' + phone;
+                        } else if (!phone.startsWith('91')) {
+                            phone = '+91' + phone;
+                        } else {
+                            phone = '+' + phone;
+                        }
+                    }
 
                     const apiUrl = (window.API_BASE_URL || '') + '/api/register';
 
@@ -101,7 +109,7 @@
                             body: JSON.stringify({
                                 name: document.getElementById('name').value,
                                 email: document.getElementById('email').value,
-                                phone: document.getElementById('phone').value,
+                                phone: phone,
                                 password: password
                             })
                         });
