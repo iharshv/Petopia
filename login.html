@@ -71,6 +71,7 @@
                     const apiUrl = (window.API_BASE_URL || '') + '/api/login';
 
                     try {
+                        console.log('Logging in at:', apiUrl);
                         const response = await fetch(apiUrl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
@@ -80,7 +81,14 @@
                             })
                         });
 
-                        const data = await response.json();
+                        let data;
+                        const contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            data = await response.json();
+                        } else {
+                            const text = await response.text();
+                            throw new Error('Server returned non-JSON response: ' + text.substring(0, 100));
+                        }
 
                         if (data.success) {
                             localStorage.setItem('isLoggedIn', 'true');
@@ -102,10 +110,11 @@
                             submitBtn.disabled = false;
                         }
                     } catch (error) {
+                        console.error('Login fetch error:', error);
                         messageDiv.style.display = 'block';
                         messageDiv.style.background = '#ffe6e6';
                         messageDiv.style.color = '#cc0000';
-                        messageDiv.textContent = 'Network error. Please try again.';
+                        messageDiv.textContent = 'Login Error: ' + error.message;
                         submitBtn.textContent = 'Login';
                         submitBtn.disabled = false;
                     }

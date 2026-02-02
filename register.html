@@ -94,6 +94,7 @@
                     const apiUrl = (window.API_BASE_URL || '') + '/api/register';
 
                     try {
+                        console.log('Registering at:', apiUrl);
                         const response = await fetch(apiUrl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
@@ -105,7 +106,14 @@
                             })
                         });
 
-                        const data = await response.json();
+                        let data;
+                        const contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            data = await response.json();
+                        } else {
+                            const text = await response.text();
+                            throw new Error('Server returned non-JSON response: ' + text.substring(0, 100));
+                        }
 
                         if (data.success) {
                             messageDiv.style.display = 'block';
@@ -122,10 +130,11 @@
                             submitBtn.disabled = false;
                         }
                     } catch (error) {
+                        console.error('Registration fetch error:', error);
                         messageDiv.style.display = 'block';
                         messageDiv.style.background = '#ffe6e6';
                         messageDiv.style.color = '#cc0000';
-                        messageDiv.textContent = 'Network error. Please try again.';
+                        messageDiv.textContent = 'Registration Error: ' + error.message;
                         submitBtn.textContent = 'Create Account';
                         submitBtn.disabled = false;
                     }
