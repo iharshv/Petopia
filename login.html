@@ -69,6 +69,48 @@
             </form>
             <script src="api-config.js"></script>
             <script>
+                function toggleMenu() {
+                    const navLinks = document.getElementById('navLinks');
+                    navLinks.classList.toggle('active');
+                }
+
+                // Auth Navigation Sync
+                document.addEventListener('DOMContentLoaded', () => {
+                    console.log('Nav version: 2.1.0');
+                    const authLinks = document.querySelector('.auth-links');
+                    const authMobile = document.getElementById('auth-mobile');
+                    const token = localStorage.getItem('token');
+                    const role = localStorage.getItem('userRole');
+
+                    if (token) {
+                        // Desktop
+                        if (authLinks) {
+                            let html = `<a href="profile.html">Profile</a>`;
+                            if (role === 'admin') {
+                                html += ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>`;
+                            }
+                            html += ` <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>`;
+                            authLinks.innerHTML = html;
+                        }
+
+                        // Mobile
+                        if (authMobile) {
+                            authMobile.style.display = 'block';
+                            let html = `<a href="profile.html">Profile</a>`;
+                            if (role === 'admin') {
+                                html += ` | <a href="admin.html">Admin Panel</a>`;
+                            }
+                            html += ` | <a href="#" onclick="handleLogout()">Logout</a>`;
+                            authMobile.innerHTML = html;
+                        }
+                    }
+                });
+
+                function handleLogout() {
+                    localStorage.clear();
+                    window.location.reload();
+                }
+
                 document.getElementById('loginForm').addEventListener('submit', async function (e) {
                     e.preventDefault();
 

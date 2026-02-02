@@ -189,11 +189,11 @@
 
                     document.getElementById('avatar-initials').textContent = user.name.charAt(0).toUpperCase();
 
-                    // Update Header Sync
+                    const role = user.role || localStorage.getItem('userRole') || 'user';
+                    localStorage.setItem('userRole', role); // Sync with DB role
                     const authLinks = document.querySelector('.auth-links');
                     const authMobile = document.getElementById('auth-mobile');
-                    const role = user.role || localStorage.getItem('userRole');
-                    localStorage.setItem('userRole', role); // Sync with DB role
+                    console.log('Nav version: 2.1.0 (Profile Sync)');
 
                     // Show admin activation if not admin
                     if (role !== 'admin') {
