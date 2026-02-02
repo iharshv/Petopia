@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
 
         // Generate JWT token
         const token = jwt.sign(
-            { userId: user._id, email: user.email, name: user.name },
+            { userId: user._id, email: user.email, name: user.name, role: user.role || 'user' },
             process.env.JWT_SECRET || 'petopia-secret-key',
             { expiresIn: '7d' }
         );
@@ -52,7 +52,8 @@ module.exports = async (req, res) => {
             token,
             user: {
                 name: user.name,
-                email: user.email
+                email: user.email,
+                role: user.role || 'user'
             }
         });
 

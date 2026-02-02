@@ -222,6 +222,27 @@
             const navLinks = document.getElementById('navLinks');
             navLinks.classList.toggle('active');
         }
+
+        // Auth Navigation Sync
+        document.addEventListener('DOMContentLoaded', () => {
+            const authLinks = document.querySelector('.auth-links');
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('userRole');
+
+            if (token && authLinks) {
+                let html = `<a href="profile.html">Profile</a>`;
+                if (role === 'admin') {
+                    html += ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>`;
+                }
+                html += ` <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>`;
+                authLinks.innerHTML = html;
+            }
+        });
+
+        function handleLogout() {
+            localStorage.clear();
+            window.location.reload();
+        }
     </script>
 
 
