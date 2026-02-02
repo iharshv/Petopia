@@ -70,6 +70,7 @@
                 <button type="submit" class="btn btn-primary" style="width: 100%;" id="submitBtn">Create
                     Account</button>
             </form>
+            <script src="api-config.js"></script>
             <script>
                 document.getElementById('registerForm').addEventListener('submit', async function (e) {
                     e.preventDefault();
@@ -90,8 +91,10 @@
                     submitBtn.textContent = 'Creating Account...';
                     submitBtn.disabled = true;
 
+                    const apiUrl = (window.API_BASE_URL || '') + '/api/register';
+
                     try {
-                        const response = await fetch('/api/register', {
+                        const response = await fetch(apiUrl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({

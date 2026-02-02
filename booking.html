@@ -215,6 +215,7 @@
         </div>
     </footer>
 
+    <script src="api-config.js"></script>
     <script>
         // Modal Logic
         var modal = document.getElementById("confirmationModal");
@@ -234,8 +235,10 @@
             submitBtn.textContent = 'Submitting...';
             submitBtn.disabled = true;
 
+            const apiUrl = (window.API_BASE_URL || '') + '/api/booking';
+
             try {
-                const response = await fetch('/api/booking', {
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
