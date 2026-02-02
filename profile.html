@@ -163,12 +163,50 @@
 
     <script src="api-config.js"></script>
     <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        function handleLogout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        function updateHeader(role) {
+            const authLinks = document.querySelector('.auth-links');
+            const authMobile = document.getElementById('auth-mobile');
+            if (authLinks) {
+                let html = `<a href="profile.html">Profile</a>`;
+                if (role === 'admin') {
+                    html += ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>`;
+                }
+                html += ` <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>`;
+                authLinks.innerHTML = html;
+            }
+            if (authMobile) {
+                authMobile.style.display = 'block';
+                let html = `<a href="profile.html">Profile</a>`;
+                if (role === 'admin') {
+                    html += ` | <a href="admin.html">Admin Panel</a>`;
+                }
+                html += ` | <a href="#" onclick="handleLogout()">Logout</a>`;
+                authMobile.innerHTML = html;
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Nav version: 2.1.0 (Profile)');
             const token = localStorage.getItem('token');
+            const role = localStorage.getItem('userRole');
+
             if (!token) {
                 window.location.href = 'login.html';
                 return;
             }
+
+            // Quick update first
+            updateHeader(role);
 
             try {
                 const apiUrl = (window.API_BASE_URL || '') + '/api/profile';
@@ -189,36 +227,15 @@
 
                     document.getElementById('avatar-initials').textContent = user.name.charAt(0).toUpperCase();
 
-                    const role = user.role || localStorage.getItem('userRole') || 'user';
-                    localStorage.setItem('userRole', role); // Sync with DB role
-                    const authLinks = document.querySelector('.auth-links');
-                    const authMobile = document.getElementById('auth-mobile');
-                    console.log('Nav version: 2.1.0 (Profile Sync)');
+                    const newRole = user.role || role || 'user';
+                    if (newRole !== role) {
+                        localStorage.setItem('userRole', newRole);
+                        updateHeader(newRole);
+                    }
 
                     // Show admin activation if not admin
-                    if (role !== 'admin') {
+                    if (newRole !== 'admin') {
                         document.getElementById('admin-activation').style.display = 'block';
-                    }
-
-                    // Desktop
-                    if (authLinks) {
-                        let html = `<a href="profile.html">Profile</a>`;
-                        if (role === 'admin') {
-                            html += ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>`;
-                        }
-                        html += ` <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>`;
-                        authLinks.innerHTML = html;
-                    }
-
-                    // Mobile
-                    if (authMobile) {
-                        authMobile.style.display = 'block';
-                        let html = `<a href="profile.html">Profile</a>`;
-                        if (role === 'admin') {
-                            html += ` | <a href="admin.html">Admin Panel</a>`;
-                        }
-                        html += ` | <a href="#" onclick="handleLogout()">Logout</a>`;
-                        authMobile.innerHTML = html;
                     }
                 } else {
                     localStorage.clear();
@@ -250,6 +267,7 @@
                     msg.style.color = 'green';
                     msg.textContent = 'Success! User promoted. Please log out and back in.';
                     localStorage.setItem('userRole', 'admin');
+                    updateHeader('admin');
                 } else {
                     msg.style.color = 'red';
                     msg.textContent = data.error || 'Failed to activate.';
@@ -257,16 +275,6 @@
             } catch (error) {
                 msg.textContent = 'Error connecting to server.';
             }
-        }
-
-        function toggleMenu() {
-            const navLinks = document.getElementById('navLinks');
-            navLinks.classList.toggle('active');
-        }
-
-        function handleLogout() {
-            localStorage.clear();
-            window.location.href = 'index.html';
         }
     </script>
 </body>
