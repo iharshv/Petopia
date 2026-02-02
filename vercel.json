@@ -1,10 +1,21 @@
 {
     "version": 2,
-    "framework": null,
     "rewrites": [
         {
-            "source": "/api/(.*)",
-            "destination": "/api/$1"
+            "source": "/api/ping",
+            "destination": "/api/ping.js"
+        },
+        {
+            "source": "/api/login",
+            "destination": "/api/login.js"
+        },
+        {
+            "source": "/api/register",
+            "destination": "/api/register.js"
+        },
+        {
+            "source": "/api/booking",
+            "destination": "/api/booking.js"
         }
     ]
 }
