@@ -145,6 +145,19 @@
             <button onclick="handleLogout()" class="btn btn-primary logout-btn" style="width: 100%;">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
+
+            <div id="admin-activation"
+                style="margin-top: 2rem; padding: 1rem; background: #f0f4f8; border-radius: 10px; display: none; text-align: left;">
+                <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.5rem; font-weight: bold;">Developer Settings:
+                    Admin Activation</p>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="password" id="admin-secret" placeholder="Secret Key"
+                        style="flex: 1; padding: 0.5rem; border-radius: 5px; border: 1px solid #ddd;">
+                    <button onclick="activateAdmin()" class="btn btn-primary"
+                        style="padding: 0.5rem 1rem; font-size: 0.8rem;">Activate</button>
+                </div>
+                <p id="admin-message" style="font-size: 0.75rem; margin-top: 0.5rem;"></p>
+            </div>
         </div>
     </div>
 
@@ -179,7 +192,13 @@
                     // Update Header Sync
                     const authLinks = document.querySelector('.auth-links');
                     const authMobile = document.getElementById('auth-mobile');
-                    const role = localStorage.getItem('userRole');
+                    const role = user.role || localStorage.getItem('userRole');
+                    localStorage.setItem('userRole', role); // Sync with DB role
+
+                    // Show admin activation if not admin
+                    if (role !== 'admin') {
+                        document.getElementById('admin-activation').style.display = 'block';
+                    }
 
                     // Desktop
                     if (authLinks) {
@@ -209,6 +228,36 @@
                 console.error('Error fetching profile:', error);
             }
         });
+
+        async function activateAdmin() {
+            const secret = document.getElementById('admin-secret').value;
+            const email = document.getElementById('display-email').textContent;
+            const msg = document.getElementById('admin-message');
+
+            if (!secret) return;
+
+            try {
+                msg.textContent = 'Processing...';
+                const apiUrl = (window.API_BASE_URL || '') + '/api/set-admin-temp';
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, secret })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    msg.style.color = 'green';
+                    msg.textContent = 'Success! User promoted. Please log out and back in.';
+                    localStorage.setItem('userRole', 'admin');
+                } else {
+                    msg.style.color = 'red';
+                    msg.textContent = data.error || 'Failed to activate.';
+                }
+            } catch (error) {
+                msg.textContent = 'Error connecting to server.';
+            }
+        }
 
         function toggleMenu() {
             const navLinks = document.getElementById('navLinks');
