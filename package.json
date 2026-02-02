@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Petopia - Pet Shop Website",
   "scripts": {
+    "build": "echo 'No build step required'",
     "dev": "live-server",
     "start": "live-server"
   },
