@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - Petopia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Reuse Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <img src="assets/logo-white.png" alt="Petopia Logo">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html#why-petopia">Why Petopia</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="index.html#reviews">Reviews</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
+                    </li>
+                </ul>
+                <div class="nav-right">
+                    <div class="nav-contact-items">
+                        <a href="tel:+919987801581"><i class="fas fa-phone-alt"
+                                style="margin-right: 5px; color: var(--primary);"></i>+91 99878 01581</a>
+                        <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6" target="_blank"
+                            style="text-decoration: underline; font-size: 0.8rem;">Airoli, Navi Mumbai</a>
+                    </div>
+                    <div class="auth-links" style="color: white; margin-left: 15px;">
+                        <a href="login.html">Login</a> <span style="color: var(--primary);">|</span> <a
+                            href="register.html">Register</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding: 4rem 0;">
+        <h2 class="section-title">Book an <span>Appointment</span></h2>
+        <div
+            style="max-width: 600px; margin: 0 auto; background: var(--white); padding: 2rem; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label for="ownerName">Owner's Name</label>
+                    <input type="text" id="ownerName" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="petName">Pet's Name</label>
+                    <input type="text" id="petName" placeholder="Pet's Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="petType">Pet Type</label>
+                    <select id="petType">
+                        <option value="dog">Dog</option>
+                        <option value="cat">Cat</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="service">Service Required</label>
+                    <select id="service" required>
+                        <option value="">Select Service</option>
+                        <optgroup label="Dog Services">
+                            <option value="boarding_dog">Dog Boarding / Daycare</option>
+                            <option value="grooming_dog_bath">Dog Bath (Short/Long)</option>
+                            <option value="grooming_dog_full">Dog Full Grooming</option>
+                        </optgroup>
+                        <optgroup label="Cat Services">
+                            <option value="boarding_cat">Cat Boarding / Daycare</option>
+                            <option value="grooming_cat_bath">Cat Signature Cleanse</option>
+                            <option value="grooming_cat_full">Cat Full Grooming</option>
+                        </optgroup>
+                        <optgroup label="General">
+                            <option value="vet">Veterinary Checkup</option>
+                            <option value="training">Training</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="flex gap-1">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="time">Time</label>
+                        <input type="time" id="time" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Contact Number</label>
+                    <input type="tel" id="phone" placeholder="+91 99999 99999" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Additional Notes</label>
+                    <textarea id="message" rows="4" placeholder="Any special instructions?"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Request Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div style="color: var(--primary); font-size: 3rem; margin-bottom: 1rem;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 style="color: var(--black); margin-bottom: 1rem;">Request Submitted!</h3>
+            <p>Thank you for choosing Petopia. Your appointment request has been received.</p>
+            <p style="margin-top: 1rem;"><strong>Next Step:</strong> Our admin team will review your request and contact
+                you shortly via phone or email to <strong>confirm your booking slot</strong>.</p>
+            <button class="btn btn-primary" style="margin-top: 1.5rem;"
+                onclick="document.getElementById('confirmationModal').style.display='none'">Okay, Got it!</button>
+        </div>
+    </div>
+
+    <!-- Reuse Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3>Petopia</h3>
+                    <p>Your one-stop shop for all things pet.</p>
+                    <div style="margin-top: 1rem;">
+                        <p><i class="fas fa-map-marker-alt"></i> <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6"
+                                target="_blank" style="color: #bbb;">Yash Paradise, Shop No 30, Sector 8A, Airoli, Navi
+                                Mumbai - 400708</a></p>
+                        <p><i class="fas fa-phone"></i> +91 9987801581 | +91 9867120142 | +91 8169223723</p>
+                        <p><i class="fas fa-envelope"></i> connectpetopia@gmail.com</p>
+                    </div>
+                </div>
+                <div>
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="booking.html">Book Appointment</a></li>
+                        <li><a href="career.html">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Information</h3>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="terms.html">Terms & Conditions</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                style="text-align: center; margin-top: 3rem; border-top: 1px solid #333; padding-top: 1rem; font-size: 0.8rem; color: #888;">
+                &copy; 2026 Petopia. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Modal Logic
+        var modal = document.getElementById("confirmationModal");
+        var span = document.getElementsByClassName("close")[0];
+
+        // Handle Form Submit
+        document.getElementById('bookingForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent actual submission
+
+            if (!localStorage.getItem('isLoggedIn')) {
+                alert("Please login to book an appointment.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            modal.style.display = "block";
+        });
+
+        // Close modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // Close if click outside
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+
+</body>
+
+</html>

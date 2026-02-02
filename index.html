@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petopia - Your Pet's Paradise</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <img src="assets/logo-white.png" alt="Petopia Logo">
+                </a>
+
+                <div class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#why-petopia">Why Petopia</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="#reviews">Reviews</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
+                    </li>
+                </ul>
+
+                <div class="nav-right">
+                    <div class="nav-contact-items">
+                        <a href="tel:+919987801581"><i class="fas fa-phone-alt"
+                                style="margin-right: 5px; color: var(--primary);"></i>+91 99878 01581</a>
+                        <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6" target="_blank"
+                            style="text-decoration: underline; font-size: 0.8rem;">Airoli, Navi Mumbai</a>
+                    </div>
+                    <div class="auth-links" style="color: white; margin-left: 15px;">
+                        <a href="login.html">Login</a> <span style="color: var(--primary);">|</span> <a
+                            href="register.html">Register</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero"
+        style="min-height: 300px; background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://www.americanhumane.org/wp-content/uploads/2024/11/shutterstock_162633491-1440x900.jpg');">
+        <div class="container">
+            <h1>Welcome to Petopia</h1>
+            <p>The ultimate destination for your furry friends. Food, Grooming, Vets & More.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="booking.html" class="btn btn-primary">Book Now</a>
+                <a href="services.html" class="btn btn-outline"
+                    style="border-color: var(--white); color: var(--black);">Explore Services</a>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Promotional Banner - Free Delivery -->
+    <section class="promo-banner"
+        style="background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%); padding: 4rem 0; overflow: hidden; position: relative;">
+
+        <!-- Animated Background Particles -->
+        <div class="particles"
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden;">
+            <div
+                style="position: absolute; width: 10px; height: 10px; background: var(--primary); border-radius: 50%; top: 20%; left: 10%; animation: float 3s ease-in-out infinite;">
+            </div>
+            <div
+                style="position: absolute; width: 6px; height: 6px; background: var(--primary); border-radius: 50%; top: 60%; left: 20%; animation: float 4s ease-in-out infinite 0.5s;">
+            </div>
+            <div
+                style="position: absolute; width: 8px; height: 8px; background: var(--primary); border-radius: 50%; top: 30%; left: 80%; animation: float 3.5s ease-in-out infinite 1s;">
+            </div>
+            <div
+                style="position: absolute; width: 5px; height: 5px; background: var(--primary); border-radius: 50%; top: 70%; left: 85%; animation: float 4s ease-in-out infinite 0.3s;">
+            </div>
+            <div
+                style="position: absolute; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; top: 50%; left: 5%; animation: float 3s ease-in-out infinite 0.7s;">
+            </div>
+        </div>
+
+        <div class="container" style="position: relative; z-index: 1;">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2rem;">
+
+                <!-- Delivery Icon Left with Animation -->
+                <div style="flex: 0 0 auto; animation: bounce 2s ease-in-out infinite;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2769/2769339.png" alt="Free Delivery"
+                        style="width: 120px; height: 120px; filter: drop-shadow(0 0 30px rgba(255,204,0,0.8));">
+                </div>
+
+                <!-- Main Content -->
+                <div style="text-align: center; flex: 1; min-width: 280px;">
+                    <!-- Animated Headline -->
+                    <div style="position: relative; display: inline-block;">
+                        <h2 class="glow-text"
+                            style="color: var(--primary); font-size: 3rem; font-weight: 900; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 3px; animation: glow 2s ease-in-out infinite alternate;">
+                            ✨ FREE DELIVERY ✨
+                        </h2>
+                        <div
+                            style="position: absolute; top: -20px; left: -20px; font-size: 2rem; animation: sparkle 1s ease-in-out infinite;">
+                            ⭐</div>
+                        <div
+                            style="position: absolute; top: -15px; right: -15px; font-size: 1.5rem; animation: sparkle 1s ease-in-out infinite 0.3s;">
+                            💫</div>
+                    </div>
+
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; margin-top: 2rem;">
+                        <!-- Offer 1 - Airoli -->
+                        <div class="offer-card"
+                            style="background: linear-gradient(145deg, rgba(255,204,0,0.2), rgba(255,204,0,0.05)); border: 3px solid var(--primary); border-radius: 20px; padding: 2rem 2.5rem; min-width: 260px; transform: rotate(-3deg); transition: all 0.3s; box-shadow: 0 0 40px rgba(255,204,0,0.3), inset 0 0 30px rgba(255,204,0,0.1);">
+                            <div
+                                style="font-size: 3rem; margin-bottom: 0.5rem; animation: bounce 2s ease-in-out infinite;">
+                                📍</div>
+                            <h3 style="color: white; font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: 700;">Within
+                                Airoli</h3>
+                            <p
+                                style="color: var(--primary); font-size: 2.5rem; font-weight: 900; text-shadow: 0 0 20px rgba(255,204,0,0.5);">
+                                100% FREE</p>
+                            <p style="color: #aaa; font-size: 1rem; margin-top: 0.5rem;">No minimum order!</p>
+                        </div>
+
+                        <!-- Offer 2 - Navi Mumbai -->
+                        <div class="offer-card"
+                            style="background: linear-gradient(145deg, rgba(255,204,0,0.25), rgba(255,204,0,0.1)); border: 4px solid var(--primary); border-radius: 20px; padding: 2rem 2.5rem; min-width: 260px; transform: rotate(3deg); transition: all 0.3s; box-shadow: 0 0 50px rgba(255,204,0,0.4), inset 0 0 40px rgba(255,204,0,0.15);">
+                            <div
+                                style="font-size: 3rem; margin-bottom: 0.5rem; animation: truckMove 2s ease-in-out infinite;">
+                                🚚</div>
+                            <h3 style="color: white; font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: 700;">All
+                                Over Navi Mumbai</h3>
+                            <p
+                                style="color: var(--primary); font-size: 2.5rem; font-weight: 900; text-shadow: 0 0 20px rgba(255,204,0,0.5);">
+                                FREE on ₹2000+</p>
+                            <p style="color: #aaa; font-size: 1rem; margin-top: 0.5rem;">Shop more, save more! 🎉</p>
+                        </div>
+                    </div>
+
+                    <a href="shop.html" class="btn btn-primary shop-now-btn"
+                        style="margin-top: 2.5rem; font-size: 1.2rem; padding: 15px 40px; animation: pulse 1.5s infinite; box-shadow: 0 0 30px rgba(255,204,0,0.5); border-radius: 30px;">
+                        <i class="fas fa-shopping-bag" style="margin-right: 10px;"></i> SHOP NOW & GET FREE DELIVERY 🛒
+                    </a>
+                </div>
+
+                <!-- Pet Images Right -->
+                <div style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 1rem;">
+                    <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=200&h=200&fit=crop"
+                        alt="Happy Dog"
+                        style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--primary); object-fit: cover; box-shadow: 0 0 30px rgba(255,204,0,0.6); animation: float 3s ease-in-out infinite;">
+                    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=200&fit=crop"
+                        alt="Cute Cat"
+                        style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover; box-shadow: 0 0 25px rgba(255,204,0,0.5); animation: float 3s ease-in-out infinite 0.5s; margin-left: 20px;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
+            }
+
+            50% {
+                transform: scale(1.08);
+                box-shadow: 0 0 50px rgba(255, 204, 0, 0.8);
+            }
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px rgba(255, 204, 0, 0.5), 0 0 40px rgba(255, 204, 0, 0.3);
+            }
+
+            to {
+                text-shadow: 0 0 40px rgba(255, 204, 0, 0.8), 0 0 80px rgba(255, 204, 0, 0.5), 0 0 120px rgba(255, 204, 0, 0.3);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes sparkle {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.3);
+            }
+        }
+
+        @keyframes truckMove {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(10px);
+            }
+        }
+
+        .offer-card:hover {
+            transform: rotate(0deg) scale(1.08) !important;
+            box-shadow: 0 0 60px rgba(255, 204, 0, 0.6) !important;
+        }
+
+        .shop-now-btn:hover {
+            transform: scale(1.1) !important;
+            box-shadow: 0 0 50px rgba(255, 204, 0, 0.8) !important;
+        }
+
+        @media (max-width: 768px) {
+            .promo-banner h2 {
+                font-size: 2rem !important;
+            }
+
+            .offer-card {
+                min-width: 220px !important;
+                padding: 1.5rem !important;
+            }
+
+            .offer-card p[style*="2.5rem"] {
+                font-size: 2rem !important;
+            }
+        }
+    </style>
+
+    <!-- Why Petopia -->
+    <section id="why-petopia" style="padding: 4rem 0;">
+        <div class="container">
+            <h2 class="section-title">Why <span>Petopia?</span></h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <i class="fas fa-heart service-icon"></i>
+                    <h3>Passionate Care</h3>
+                    <p>We guarantee love, quality, and trust through tail wags, gentle care, and cozy spaces.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-user-md service-icon"></i>
+                    <h3>Expert Standards</h3>
+                    <p>We utilize safe and hygienic practices, trained and compassionate staff, and premium products.
+                    </p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-home service-icon"></i>
+                    <h3>Home Away From Home</h3>
+                    <p>From playful daycare and peaceful boarding to relaxing spa treatments, every detail is designed
+                        for comfort.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Preview -->
+    <section class="services-preview" style="background-color: var(--gray-light); padding: 4rem 0;">
+        <div class="container">
+            <h2 class="section-title">Our <span>Services</span></h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <i class="fas fa-bone service-icon"></i>
+                    <h3>Healthy Food</h3>
+                    <p>Premium nutrition for dogs and cats.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-cut service-icon"></i>
+                    <h3>Grooming</h3>
+                    <p>Spa days to make your pet look and feel their best.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-paw service-icon"></i>
+                    <h3>Accessories</h3>
+                    <p>Toys, leashes, beds and more.</p>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-bed service-icon"></i>
+                    <h3>Pet Boarding</h3>
+                    <p>Safe and fun staycations for your pets.</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="services.html" class="btn btn-primary">View All Services</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" style="padding: 4rem 0;">
+        <div class="container">
+            <h2 class="section-title">What Pet Parents <span>Say</span></h2>
+            <div class="services-grid">
+                <div class="service-card" style="text-align: left;">
+                    <div style="color: var(--primary); margin-bottom: 0.5rem;">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"Petopia is an amazing one-stop destination for pet spa, daycare, and quality food. The staff are
+                        caring, professional, and truly love pets—highly recommended!"</p>
+                    <h4 style="margin-top: 1rem;">- Renu Nair</h4>
+                </div>
+                <div class="service-card" style="text-align: left;">
+                    <div style="color: var(--primary); margin-bottom: 0.5rem;">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p>"Every Pet Deserve A Paradise."</p>
+                    <h4 style="margin-top: 1rem;">- Viraj Jagade</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3>Petopia</h3>
+                    <p>Your one-stop shop for all things pet.</p>
+                    <div style="margin-top: 1rem;">
+                        <p><i class="fas fa-map-marker-alt"></i> <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6"
+                                target="_blank" style="color: #bbb;">Yash Paradise, Shop No 30, Sector 8A, Airoli, Navi
+                                Mumbai - 400708</a></p>
+                        <p><i class="fas fa-phone"></i>
+                            <a href="tel:+919987801581" style="color: #bbb;">+91 9987801581</a> |
+                            <a href="tel:+919867120142" style="color: #bbb;">+91 9867120142</a> |
+                            <a href="tel:+918169223723" style="color: #bbb;">+91 8169223723</a>
+                        </p>
+                        <p><i class="fas fa-envelope"></i> <a href="mailto:connectpetopia@gmail.com"
+                                style="color: #bbb;">connectpetopia@gmail.com</a></p>
+                    </div>
+                </div>
+                <div>
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="booking.html">Book Appointment</a></li>
+                        <li><a href="career.html">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Information</h3>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="terms.html">Terms & Conditions</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                style="text-align: center; margin-top: 3rem; border-top: 1px solid #333; padding-top: 1rem; font-size: 0.8rem; color: #888;">
+                &copy; 2026 Petopia. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+</body>
+
+</html>

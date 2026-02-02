@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Petopia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <img src="assets/logo-white.png" alt="Petopia Logo">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html#why-petopia">Why Petopia</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="index.html#reviews">Reviews</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
+                    </li>
+                </ul>
+                <div class="nav-contact-items">
+                    <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6" target="_blank"
+                        style="color: white; text-decoration: underline;">Airoli, Navi Mumbai</a>
+                </div>
+                <div class="auth-links" style="color: white; margin-left: 15px;">
+                    <a href="login.html" style="color: var(--primary);">Login</a> <span
+                        style="color: var(--primary);">|</span> <a href="register.html">Register</a>
+                </div>
+        </div>
+        </nav>
+        </div>
+    </header>
+
+    <div class="container"
+        style="padding: 6rem 0; min-height: 60vh; display: flex; align-items: center; justify-content: center;">
+        <div
+            style="width: 100%; max-width: 400px; background: var(--white); padding: 2rem; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid #eee;">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Login to <span>Petopia</span></h2>
+            <form action="#">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <script>
+                document.querySelector('form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    localStorage.setItem('isLoggedIn', 'true');
+                    // Add a tiny delay for effect
+                    const submitBtn = this.querySelector('button');
+                    submitBtn.innerText = 'Logging in...';
+                    setTimeout(() => {
+                        window.location.href = 'shop.html';
+                    }, 500);
+                });
+            </script>
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                Don't have an account? <a href="register.html" style="color: var(--primary); font-weight: 600;">Register
+                    here</a>
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3>Petopia</h3>
+                    <p>Your one-stop shop for all things pet.</p>
+                    <div style="margin-top: 1rem;">
+                        <p><i class="fas fa-map-marker-alt"></i> <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6"
+                                target="_blank" style="color: #bbb;">Yash Paradise, Shop No 30, Sector 8A, Airoli, Navi
+                                Mumbai - 400708</a></p>
+                        <p><i class="fas fa-phone"></i> +91 9987801581 | +91 9867120142 | +91 8169223723</p>
+                        <p><i class="fas fa-envelope"></i> connectpetopia@gmail.com</p>
+                    </div>
+                </div>
+                <div>
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="booking.html">Book Appointment</a></li>
+                        <li><a href="career.html">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Information</h3>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="terms.html">Terms & Conditions</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                style="text-align: center; margin-top: 3rem; border-top: 1px solid #333; padding-top: 1rem; font-size: 0.8rem; color: #888;">
+                &copy; 2026 Petopia. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

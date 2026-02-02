@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services & Pricing - Petopia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .service-type-header {
+            background-color: var(--black);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .service-type-header i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .service-section-container {
+            border: 1px solid #ddd;
+            border-top: none;
+            padding: 2rem;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 2rem;
+        }
+
+        .jump-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <img src="assets/logo-white.png" alt="Petopia Logo">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html#why-petopia">Why Petopia</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="index.html#reviews">Reviews</a></li>
+                    <li><a href="services.html" style="color: var(--primary);">Services</a></li>
+                    <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
+                    </li>
+                </ul>
+                <div class="nav-right">
+                    <div class="nav-contact-items">
+                        <a href="tel:+919987801581"><i class="fas fa-phone-alt"
+                                style="margin-right: 5px; color: var(--primary);"></i>+91 99878 01581</a>
+                        <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6" target="_blank"
+                            style="text-decoration: underline; font-size: 0.8rem;">Airoli, Navi Mumbai</a>
+                    </div>
+                    <div class="auth-links" style="color: white; margin-left: 15px;">
+                        <a href="login.html">Login</a> <span style="color: var(--primary);">|</span> <a
+                            href="register.html">Register</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="padding: 4rem 0;">
+        <h2 class="section-title">Our <span>Services</span></h2>
+
+        <div class="jump-links">
+            <a href="#dog-services" class="btn btn-primary"><i class="fas fa-dog"></i> Dog Services</a>
+            <a href="#cat-services" class="btn btn-outline"><i class="fas fa-cat"></i> Cat Services</a>
+        </div>
+
+        <!-- DOG SERVICES -->
+        <section id="dog-services">
+            <div class="service-type-header">
+                <i class="fas fa-dog"></i>
+                <h2 style="margin:0; font-size: 1.8rem; color: white;">Dog Services</h2>
+            </div>
+            <div class="service-section-container">
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">Boarding & Daycare (Dogs)</h3>
+                <p style="margin-bottom: 1.5rem;">We offer a "Home Away from Home" with clean, secure resting areas.</p>
+                <div style="overflow-x: auto;">
+                    <table class="pricing-table">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">Stay Duration</th>
+                                <th>Mini Woof</th>
+                                <th>Woof</th>
+                                <th>Mega Woof</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align: left;">Hourly Stay (Per Hour)</td>
+                                <td>₹100</td>
+                                <td>₹150</td>
+                                <td>₹200</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;">Half Day (Up to 10 Hours)</td>
+                                <td>₹500</td>
+                                <td>₹700</td>
+                                <td>₹900</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;">Full Day (Up to 24 Hours)</td>
+                                <td>₹900</td>
+                                <td>₹1100</td>
+                                <td>₹1300</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="color: var(--primary); margin: 2rem 0 1rem;">Spa & Grooming (Dogs)</h3>
+                <div style="overflow-x: auto;">
+                    <table class="pricing-table">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">Service</th>
+                                <th>Mini Woof</th>
+                                <th>Woof</th>
+                                <th>Mega Woof</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align: left;">Short Fur Bath</td>
+                                <td>₹600 – ₹1000</td>
+                                <td>₹800 – ₹1400</td>
+                                <td>₹1000 – ₹1900</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;">Long Fur Bath</td>
+                                <td>₹800 – ₹1200</td>
+                                <td>₹1000 – ₹1500</td>
+                                <td>₹1500 – ₹2100</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;">Complete Styling Groom</td>
+                                <td>₹900</td>
+                                <td>₹1200</td>
+                                <td>₹1500</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="service-guidelines">
+                    <h4>Dog Luxury Add-Ons</h4>
+                    <ul style="list-style: disc; padding-left: 20px;">
+                        <li><strong>Nail/Ear Care:</strong> ₹150 each.</li>
+                        <li><strong>Medicated Bath:</strong> ₹200.</li>
+                        <li><strong>Oil Massage:</strong> ₹200.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CAT SERVICES -->
+        <section id="cat-services">
+            <div class="service-type-header">
+                <i class="fas fa-cat"></i>
+                <h2 style="margin:0; font-size: 1.8rem; color: white;">Cat Services</h2>
+            </div>
+            <div class="service-section-container">
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">Boarding & Daycare (Cats)</h3>
+                <p style="margin-bottom: 1.5rem;">Secure and hygienic environment. Includes clean resting areas and play
+                    breaks.</p>
+                <div style="overflow-x: auto;">
+                    <table class="pricing-table">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">Service</th>
+                                <th>Price</th>
+                                <th>Inclusions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align: left;">Hourly Stay</td>
+                                <td>₹100 / hr</td>
+                                <td>Supervision</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;">Half Day (Up to 10 Hours)</td>
+                                <td>₹350</td>
+                                <td>1 Meal & 1 Walk</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;">Full Day (Up to 24 Hours)</td>
+                                <td>₹600</td>
+                                <td>2 Meals & 2 Walks</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="color: var(--primary); margin: 2rem 0 1rem;">Spa & Grooming (Cats)</h3>
+                <div style="overflow-x: auto;">
+                    <table class="pricing-table">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">Service</th>
+                                <th>Price</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align: left;">Signature Essential Cleanse</td>
+                                <td>₹600</td>
+                                <td>Gentle bath & coat brushing</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;">Advanced Wellness Spa</td>
+                                <td>₹1000</td>
+                                <td>De-shedding therapy, deep conditioning</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;">Precision Grooming</td>
+                                <td>₹900</td>
+                                <td>Complete styling groom</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left;">Total Kitty Pamper Session</td>
+                                <td>₹1400</td>
+                                <td>Spa therapy & professional grooming</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="service-guidelines">
+                    <h4>Cat Luxury Add-Ons</h4>
+                    <ul style="list-style: disc; padding-left: 20px; margin-bottom: 2rem;">
+                        <li><strong>Nail Perfection:</strong> ₹150.</li>
+                        <li><strong>Dermatological Medicated Bath:</strong> ₹300.</li>
+                        <li><strong>Ear Purification:</strong> ₹100.</li>
+                        <li><strong>Dental Care:</strong> ₹100.</li>
+                        <li><strong>Paw Oil Massage:</strong> ₹100.</li>
+                    </ul>
+
+                    <h4>Important Guidelines</h4>
+                    <div class="guideline-item"><strong>Boarding:</strong> Prior appointments recommended. Pets must be
+                        vaccinated and healthy. Owner's food preferred. Label belongings.</div>
+                    <div class="guideline-item"><strong>Grooming:</strong> Appointments mandatory. "Zero cuts" not
+                        recommended unless medically advised. 24h cancellation notice required.</div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3>Petopia</h3>
+                    <p>Your one-stop shop for all things pet.</p>
+                    <div style="margin-top: 1rem;">
+                        <p><i class="fas fa-map-marker-alt"></i> <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6"
+                                target="_blank" style="color: #bbb;">Yash Paradise, Shop No 30, Sector 8A, Airoli, Navi
+                                Mumbai - 400708</a></p>
+                        <p><i class="fas fa-phone"></i> +91 9987801581 | +91 9867120142 | +91 8169223723</p>
+                        <p><i class="fas fa-envelope"></i> connectpetopia@gmail.com</p>
+                    </div>
+                </div>
+                <div>
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="booking.html">Book Appointment</a></li>
+                        <li><a href="career.html">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Information</h3>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="terms.html">Terms & Conditions</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                style="text-align: center; margin-top: 3rem; border-top: 1px solid #333; padding-top: 1rem; font-size: 0.8rem; color: #888;">
+                &copy; 2026 Petopia. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+
+</body>
+
+</html>
