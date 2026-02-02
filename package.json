@@ -1,15 +1,14 @@
 {
   "name": "petopia",
   "version": "1.0.0",
-  "description": "Petopia - Pet Shop and Services",
-  "main": "index.js",
+  "description": "Petopia - Pet Shop Website",
   "scripts": {
-    "start": "live-server . --port=3000 --entry-file=index.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "live-server",
+    "start": "live-server"
   },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "live-server": "^1.2.0"
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^6.3.0"
   }
 }

@@ -221,8 +221,8 @@
         var span = document.getElementsByClassName("close")[0];
 
         // Handle Form Submit
-        document.getElementById('bookingForm').addEventListener('submit', function (e) {
-            e.preventDefault(); // Prevent actual submission
+        document.getElementById('bookingForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
 
             if (!localStorage.getItem('isLoggedIn')) {
                 alert("Please login to book an appointment.");
@@ -230,7 +230,41 @@
                 return;
             }
 
-            modal.style.display = "block";
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/booking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ownerName: document.getElementById('ownerName').value,
+                        petName: document.getElementById('petName').value,
+                        petType: document.getElementById('petType').value,
+                        service: document.getElementById('service').value,
+                        date: document.getElementById('date').value,
+                        time: document.getElementById('time').value,
+                        phone: document.getElementById('phone').value,
+                        email: localStorage.getItem('userEmail') || '',
+                        notes: document.getElementById('message').value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    modal.style.display = "block";
+                    document.getElementById('bookingForm').reset();
+                } else {
+                    alert(data.error || 'Booking failed. Please try again.');
+                }
+            } catch (error) {
+                alert('Network error. Please try again.');
+            }
+
+            submitBtn.textContent = 'Request Appointment';
+            submitBtn.disabled = false;
         });
 
         // Close modal
