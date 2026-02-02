@@ -29,6 +29,8 @@
                     <li><a href="services.html">Services</a></li>
                     <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
                     </li>
+                    <li id="auth-mobile"
+                        style="margin-top: 10px; border-top: 1px solid #444; padding-top: 10px; display: none;"></li>
                 </ul>
 
                 <div class="nav-right">
@@ -402,16 +404,31 @@
         // Auth Navigation Sync
         document.addEventListener('DOMContentLoaded', () => {
             const authLinks = document.querySelector('.auth-links');
+            const authMobile = document.getElementById('auth-mobile');
             const token = localStorage.getItem('token');
             const role = localStorage.getItem('userRole');
 
-            if (token && authLinks) {
-                let html = `<a href="profile.html">Profile</a>`;
-                if (role === 'admin') {
-                    html += ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>`;
+            if (token) {
+                // Desktop
+                if (authLinks) {
+                    let html = `<a href="profile.html">Profile</a>`;
+                    if (role === 'admin') {
+                        html += ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>`;
+                    }
+                    html += ` <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>`;
+                    authLinks.innerHTML = html;
                 }
-                html += ` <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>`;
-                authLinks.innerHTML = html;
+
+                // Mobile
+                if (authMobile) {
+                    authMobile.style.display = 'block';
+                    let html = `<a href="profile.html">Profile</a>`;
+                    if (role === 'admin') {
+                        html += ` | <a href="admin.html">Admin Panel</a>`;
+                    }
+                    html += ` | <a href="#" onclick="handleLogout()">Logout</a>`;
+                    authMobile.innerHTML = html;
+                }
             }
         });
 

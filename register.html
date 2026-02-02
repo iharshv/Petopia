@@ -17,24 +17,34 @@
                 <a href="index.html" class="logo">
                     <img src="assets/logo-white.png" alt="Petopia Logo">
                 </a>
-                <ul class="nav-links">
+
+                <div class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul class="nav-links" id="navLinks">
                     <li><a href="index.html#why-petopia">Why Petopia</a></li>
                     <li><a href="shop.html">Shop</a></li>
                     <li><a href="index.html#reviews">Reviews</a></li>
                     <li><a href="services.html">Services</a></li>
                     <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
                     </li>
+                    <li id="auth-mobile"
+                        style="margin-top: 10px; border-top: 1px solid #444; padding-top: 10px; display: none;"></li>
                 </ul>
-                <div class="nav-contact-items">
-                    <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6" target="_blank"
-                        style="color: white; text-decoration: underline;">Airoli, Navi Mumbai</a>
+
+                <div class="nav-right">
+                    <div class="nav-contact-items">
+                        <a href="tel:+919987801581"><i class="fas fa-phone-alt"
+                                style="margin-right: 5px; color: var(--primary);"></i>+91 99878 01581</a>
+                        <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6" target="_blank"
+                            style="text-decoration: underline; font-size: 0.8rem;">Airoli, Navi Mumbai</a>
+                    </div>
+                    <div class="auth-links" style="color: white; margin-left: 15px;">
+                        <a href="login.html">Login</a> <span style="color: var(--primary);">|</span> <a
+                            href="register.html">Register</a>
+                    </div>
                 </div>
-                <div class="auth-links" style="color: white; margin-left: 15px;">
-                    <a href="login.html">Login</a> <span style="color: var(--primary);">|</span> <a href="register.html"
-                        style="color: var(--primary);">Register</a>
-                </div>
-        </div>
-        </nav>
+            </nav>
         </div>
     </header>
 
@@ -212,6 +222,48 @@
         </div>
     </footer>
 
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        // Auth Navigation Sync
+        document.addEventListener('DOMContentLoaded', () => {
+            const authLinks = document.querySelector('.auth-links');
+            const authMobile = document.getElementById('auth-mobile');
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('userRole');
+
+            if (token) {
+                // Desktop
+                if (authLinks) {
+                    let html = `<a href="profile.html">Profile</a>`;
+                    if (role === 'admin') {
+                        html += ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>`;
+                    }
+                    html += ` <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>`;
+                    authLinks.innerHTML = html;
+                }
+
+                // Mobile
+                if (authMobile) {
+                    authMobile.style.display = 'block';
+                    let html = `<a href="profile.html">Profile</a>`;
+                    if (role === 'admin') {
+                        html += ` | <a href="admin.html">Admin Panel</a>`;
+                    }
+                    html += ` | <a href="#" onclick="handleLogout()">Logout</a>`;
+                    authMobile.innerHTML = html;
+                }
+            }
+        });
+
+        function handleLogout() {
+            localStorage.clear();
+            window.location.reload();
+        }
+    </script>
 </body>
 
 </html>
