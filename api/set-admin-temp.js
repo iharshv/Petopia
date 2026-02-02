@@ -19,7 +19,8 @@ module.exports = async (req, res) => {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { email, secret } = req.body;
+    const { email: rawEmail, secret } = req.body;
+    const email = rawEmail ? rawEmail.toLowerCase() : null;
 
     if (secret !== 'petopia-admin-fix-2026') {
         return res.status(401).json({ error: 'Invalid secret key' });

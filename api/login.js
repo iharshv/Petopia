@@ -17,7 +17,8 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { email, password } = req.body;
+        const { email: rawEmail, password } = req.body;
+        const email = rawEmail ? rawEmail.toLowerCase() : null;
 
         // Validation
         if (!email || !password) {

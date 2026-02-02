@@ -192,10 +192,12 @@
 
                     document.getElementById('avatar-initials').textContent = user.name.charAt(0).toUpperCase();
 
-                    const newRole = user.role || role || 'user';
-                    if (newRole !== role) {
+                    const currentRole = localStorage.getItem('userRole') || 'user';
+                    const newRole = user.role || 'user';
+
+                    if (newRole !== currentRole) {
                         localStorage.setItem('userRole', newRole);
-                        updateHeader(newRole);
+                        PetopiaAuth.sync();
                     }
 
                     // Show admin activation if not admin
@@ -232,7 +234,7 @@
                     msg.style.color = 'green';
                     msg.textContent = 'Success! User promoted. Please log out and back in.';
                     localStorage.setItem('userRole', 'admin');
-                    updateHeader('admin');
+                    PetopiaAuth.sync();
                 } else {
                     msg.style.color = 'red';
                     msg.textContent = data.error || 'Failed to activate.';
