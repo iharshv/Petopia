@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Petopia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 2rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-table-container {
+            overflow-x: auto;
+            margin-top: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        #stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html"><img src="assets/logo.png" alt="Petopia Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="admin.html" class="active">Admin Dashboard</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li id="auth-link"><button onclick="handleLogout()" class="btn btn-secondary">Logout</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="admin-container">
+        <div class="dashboard-card">
+            <div class="profile-header">
+                <h2>Appointment Management</h2>
+                <p>Approve or manage upcoming pet care requests</p>
+            </div>
+
+            <div id="stats-bar">
+                <div class="stat-card">
+                    <h3 id="stat-total">0</h3>
+                    <p>Total Requests</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-pending">0</h3>
+                    <p>Pending Approval</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-today">0</h3>
+                    <p>Appointments Today</p>
+                </div>
+            </div>
+
+            <div class="admin-table-container">
+                <table id="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Owner & Pet</th>
+                            <th>Service</th>
+                            <th>Date & Time</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointments-list">
+                        <tr>
+                            <td colspan="6" style="text-align: center;">Loading appointments...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="api-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('userRole');
+
+            if (!token || role !== 'admin') {
+                alert('Access Denied: Admins Only');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            loadAppointments();
+        });
+
+        async function loadAppointments() {
+            try {
+                const token = localStorage.getItem('token');
+                const apiUrl = (window.API_BASE_URL || '') + '/api/admin-appointments';
+                const response = await fetch(apiUrl, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const bookings = await response.json();
+                    updateStats(bookings);
+                    renderTable(bookings);
+                }
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+            }
+        }
+
+        function updateStats(bookings) {
+            document.getElementById('stat-total').textContent = bookings.length;
+            document.getElementById('stat-pending').textContent = bookings.filter(b => b.status === 'pending').length;
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('stat-today').textContent = bookings.filter(b => b.date === today).length;
+        }
+
+        function renderTable(bookings) {
+            const list = document.getElementById('appointments-list');
+            if (bookings.length === 0) {
+                list.innerHTML = '<tr><td colspan="6" style="text-align: center;">No appointments found.</td></tr>';
+                return;
+            }
+
+            list.innerHTML = bookings.map(b => `
+                <tr>
+                    <td>
+                        <strong>${b.ownerName}</strong><br>
+                        <small>${b.petName} (${b.petType})</small>
+                    </td>
+                    <td>${b.service}</td>
+                    <td>
+                        ${b.date}<br>
+                        <small>${b.time}</small>
+                    </td>
+                    <td>${b.phone}</td>
+                    <td>
+                        <span class="status-badge status-${b.status}">${b.status}</span>
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            ${b.status === 'pending' ? `
+                                <button onclick="updateStatus('${b._id}', 'approved')" class="btn btn-sm btn-approve">Approve</button>
+                                <button onclick="updateStatus('${b._id}', 'rejected')" class="btn btn-sm btn-reject">Reject</button>
+                            ` : `<small>Completed</small>`}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function updateStatus(bookingId, status) {
+            const token = localStorage.getItem('token');
+            const apiUrl = (window.API_BASE_URL || '') + '/api/admin-appointments';
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ bookingId, status })
+                });
+
+                if (response.ok) {
+                    loadAppointments();
+                } else {
+                    alert('Failed to update status');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        function handleLogout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+
+</html>

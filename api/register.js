@@ -43,6 +43,7 @@ module.exports = async (req, res) => {
             dob,
             gender,
             password: hashedPassword,
+            role: 'user',
             createdAt: new Date()
         });
 
