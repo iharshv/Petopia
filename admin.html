@@ -297,38 +297,34 @@
         }
 
         // Auth Navigation Sync - Update Header
-        function syncHeader() {
+        function updateHeader(role) {
+            console.log('Admin Page Nav Update:', role);
             const authLinks = document.querySelector('.auth-links');
             const authMobile = document.getElementById('auth-mobile');
-            const token = localStorage.getItem('token');
-            const role = localStorage.getItem('userRole');
+            const profileLinks = `
+                <a href="profile.html">Profile</a>
+                ${role === 'admin' ? ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>` : ''}
+                <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>
+            `;
 
-            if (token) {
-                // Desktop
-                if (authLinks) {
-                    let html = `<a href="profile.html">Profile</a>`;
-                    if (role === 'admin') {
-                        html += ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>`;
-                    }
-                    html += ` <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>`;
-                    authLinks.innerHTML = html;
-                }
-
-                // Mobile
-                if (authMobile) {
-                    authMobile.style.display = 'block';
-                    let html = `<a href="profile.html">Profile</a>`;
-                    if (role === 'admin') {
-                        html += ` | <a href="admin.html">Admin Panel</a>`;
-                    }
-                    html += ` | <a href="#" onclick="handleLogout()">Logout</a>`;
-                    authMobile.innerHTML = html;
-                }
+            if (authLinks) {
+                authLinks.innerHTML = profileLinks;
+            }
+            if (authMobile) {
+                authMobile.style.display = 'block';
+                authMobile.innerHTML = profileLinks.replace(/\|/g, '<span style="color:#444">|</span>');
             }
         }
 
         // Run sync on load
-        document.addEventListener('DOMContentLoaded', syncHeader);
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Nav version: 2.1.1 (Admin)');
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('userRole');
+            if (token) {
+                updateHeader(role);
+            }
+        });
 
         function toggleMenu() {
             const navLinks = document.getElementById('navLinks');

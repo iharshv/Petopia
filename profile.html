@@ -174,29 +174,27 @@
         }
 
         function updateHeader(role) {
+            console.log('Updating header with role:', role);
             const authLinks = document.querySelector('.auth-links');
             const authMobile = document.getElementById('auth-mobile');
+
+            const profileLinks = `
+                <a href="profile.html">Profile</a>
+                ${role === 'admin' ? ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>` : ''}
+                <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>
+            `;
+
             if (authLinks) {
-                let html = `<a href="profile.html">Profile</a>`;
-                if (role === 'admin') {
-                    html += ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>`;
-                }
-                html += ` <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>`;
-                authLinks.innerHTML = html;
+                authLinks.innerHTML = profileLinks;
             }
             if (authMobile) {
                 authMobile.style.display = 'block';
-                let html = `<a href="profile.html">Profile</a>`;
-                if (role === 'admin') {
-                    html += ` | <a href="admin.html">Admin Panel</a>`;
-                }
-                html += ` | <a href="#" onclick="handleLogout()">Logout</a>`;
-                authMobile.innerHTML = html;
+                authMobile.innerHTML = profileLinks.replace(/\|/g, '<span style="color:#444">|</span>');
             }
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('Nav version: 2.1.0 (Profile)');
+            console.log('Nav version: 2.1.1 (Profile)');
             const token = localStorage.getItem('token');
             const role = localStorage.getItem('userRole');
 
