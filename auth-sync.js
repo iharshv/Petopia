@@ -102,4 +102,8 @@ window.handleLogout = PetopiaAuth.logout;
 window.toggleMenu = PetopiaAuth.toggleMenu;
 
 // Auto-run on load
-document.addEventListener('DOMContentLoaded', () => PetopiaAuth.sync());
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => PetopiaAuth.sync());
+} else {
+    PetopiaAuth.sync();
+}
