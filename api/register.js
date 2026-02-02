@@ -16,10 +16,10 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { name, email, phone, password } = req.body;
+        const { name, email, phone, dob, gender, password } = req.body;
 
         // Validation
-        if (!name || !email || !phone || !password) {
+        if (!name || !email || !phone || !dob || !gender || !password) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
@@ -40,6 +40,8 @@ module.exports = async (req, res) => {
             name,
             email,
             phone,
+            dob,
+            gender,
             password: hashedPassword,
             createdAt: new Date()
         });

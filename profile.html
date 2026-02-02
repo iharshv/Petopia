@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Petopia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 120px auto 40px;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1rem;
+        }
+
+        .profile-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .profile-info {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            padding: 0.8rem;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .logout-btn {
+            background: #ff4757;
+            margin-top: 1rem;
+        }
+
+        .logout-btn:hover {
+            background: #ff6b81;
+        }
+
+        #message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html"><img src="assets/logo.png" alt="Petopia Logo"></a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="booking.html">Booking</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li id="auth-link"><a href="login.html" class="btn btn-secondary">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="profile-container">
+            <div id="message"></div>
+            <div class="profile-header">
+                <div class="profile-avatar" id="avatar-initials">P</div>
+                <h2 id="display-name">Loading...</h2>
+                <p id="display-email">Loading...</p>
+            </div>
+
+            <div class="profile-form-group">
+                <label>Full Name</label>
+                <div class="profile-info" id="info-name">-</div>
+            </div>
+
+            <div class="profile-form-group">
+                <label>Phone Number</label>
+                <div class="profile-info" id="info-phone">-</div>
+            </div>
+
+            <div class="row">
+                <div class="profile-form-group" style="flex: 1; margin-right: 1rem;">
+                    <label>Date of Birth</label>
+                    <div class="profile-info" id="info-dob">-</div>
+                </div>
+                <div class="profile-form-group" style="flex: 1;">
+                    <label>Gender</label>
+                    <div class="profile-info" id="info-gender">-</div>
+                </div>
+            </div>
+
+            <button onclick="handleLogout()" class="btn btn-primary logout-btn" style="width: 100%;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <script src="api-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const apiUrl = (window.API_BASE_URL || '') + '/api/profile';
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('display-name').textContent = user.name;
+                    document.getElementById('display-email').textContent = user.email;
+                    document.getElementById('info-name').textContent = user.name;
+                    document.getElementById('info-phone').textContent = user.phone || 'Not provided';
+                    document.getElementById('info-dob').textContent = user.dob || 'Not provided';
+                    document.getElementById('info-gender').textContent = user.gender || 'Not provided';
+
+                    document.getElementById('avatar-initials').textContent = user.name.charAt(0).toUpperCase();
+
+                    // Update header
+                    document.getElementById('auth-link').innerHTML = '<a href="profile.html" class="btn btn-secondary"><i class="fas fa-user"></i> Profile</a>';
+                } else {
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+            }
+        });
+
+        function handleLogout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+
+</html>
