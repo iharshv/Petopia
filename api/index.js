@@ -190,4 +190,8 @@ app.get('/api/ping', (req, res) => {
     res.json({ status: 'ok', message: 'Petopia API is alive! (express-centralized-v1)', time: new Date().toISOString() });
 });
 
+app.get('/api/test-deployment', (req, res) => {
+    res.json({ success: true, message: 'New Express Deployment is LIVE!' });
+});
+
 module.exports = app;
