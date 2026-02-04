@@ -236,20 +236,7 @@
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
 
-            <!-- Admin Activation -->
-            <div id="admin-activation"
-                style="margin-top: 2rem; padding: 1rem; background: #fff3cd; border-radius: 15px; border: 1px dashed #ffeeba; display: none; text-align: left;">
-                <p style="font-size: 0.8rem; color: #856404; margin-bottom: 0.5rem; font-weight: bold;">
-                    <i class="fas fa-shield-alt"></i> Developer: Admin Activation
-                </p>
-                <div style="display: flex; gap: 0.5rem;">
-                    <input type="password" id="admin-secret" placeholder="Enter Secret Key"
-                        style="flex: 1; padding: 0.5rem; border-radius: 8px; border: 1px solid #ddd;">
-                    <button onclick="activateAdmin()" class="btn btn-primary"
-                        style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: 8px;">Activate</button>
-                </div>
-                <p id="admin-message" style="font-size: 0.75rem; margin-top: 0.5rem;"></p>
-            </div>
+
 
             <!-- My Pets Section -->
             <div id="pets-section"
@@ -349,9 +336,7 @@
                         if (window.PetopiaAuth) PetopiaAuth.sync();
                     }
 
-                    if (newRole !== 'admin') {
-                        document.getElementById('admin-activation').style.display = 'block';
-                    }
+
 
                     // Load History
                     await loadHistory();
@@ -465,36 +450,7 @@
             }
         }
 
-        async function activateAdmin() {
-            const secret = document.getElementById('admin-secret').value;
-            const email = document.getElementById('display-email').textContent;
-            const msg = document.getElementById('admin-message');
 
-            if (!secret) return;
-
-            try {
-                msg.textContent = 'Processing...';
-                const apiUrl = (window.API_BASE_URL || '') + '/api/set-admin-temp';
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, secret })
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    msg.style.color = 'green';
-                    msg.textContent = 'Success! User promoted. Please log out and back in.';
-                    localStorage.setItem('userRole', 'admin');
-                    PetopiaAuth.sync();
-                } else {
-                    msg.style.color = 'red';
-                    msg.textContent = data.error || 'Failed to activate.';
-                }
-            } catch (error) {
-                msg.textContent = 'Error connecting to server.';
-            }
-        }
     </script>
 </body>
 
