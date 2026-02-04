@@ -146,6 +146,70 @@ app.get('/api/projects', authenticateToken, async (req, res) => {
     }
 });
 
+// --- ADMIN USER MANAGEMENT ---
+
+// Get All Users
+app.get('/api/users', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+        const users = await User.find().select('-password').sort({ createdAt: -1 }); // Exclude passwords
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Create User (Admin)
+app.post('/api/users', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+        const { name, email, password, role, phone, gender, dob } = req.body;
+
+        const existingUser = await User.findOne({ email: email.toLowerCase() });
+        if (existingUser) return res.status(400).json({ error: 'Email already exists' });
+
+        const newUser = new User({
+            name,
+            email: email.toLowerCase(),
+            password, // Plain text as per architecture
+            role,
+            phone,
+            gender,
+            dob
+        });
+        await newUser.save();
+        res.status(201).json({ success: true, message: 'User created' });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Update User
+app.put('/api/users/:id', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+
+        const updates = { ...req.body };
+        if (updates.email) updates.email = updates.email.toLowerCase();
+
+        await User.findByIdAndUpdate(req.params.id, { $set: updates });
+        res.json({ success: true, message: 'User updated' });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Delete User
+app.delete('/api/users/:id', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+        await User.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: 'User deleted' });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 app.get('/api/projects/my/:email', authenticateToken, async (req, res) => {
     try {
         const projects = await Project.find({ email: req.params.email.toLowerCase() }).sort({ createdAt: -1 });
