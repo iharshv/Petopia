@@ -165,13 +165,22 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
+  padding: 0.5rem 0;
+}
+
+.logo img {
+  height: 60px;
+  width: auto;
+  display: block;
 }
 
 .nav-links {
   display: flex;
   gap: 1.5rem;
   align-items: center;
+  flex: 1;
+  justify-content: center;
 }
 
 .nav-right {
