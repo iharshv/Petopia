@@ -187,7 +187,7 @@ app.put('/api/projects/:id/status', authenticateToken, async (req, res) => {
 
 // Ping
 app.get('/api/ping', (req, res) => {
-    res.json({ status: 'ok', message: 'Petopia API is alive!', time: new Date().toISOString() });
+    res.json({ status: 'ok', message: 'Petopia API is alive! (express-centralized-v1)', time: new Date().toISOString() });
 });
 
 module.exports = app;
