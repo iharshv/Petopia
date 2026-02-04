@@ -115,10 +115,24 @@
                         return;
                     }
 
-                    let phone = document.getElementById('phone').value.trim();
+                    let phoneInput = document.getElementById('phone');
+                    let phone = phoneInput.value.trim();
+
+                    // Prevent email in phone field (as seen in user screenshot)
+                    if (phone.includes('@')) {
+                        messageDiv.style.display = 'block';
+                        messageDiv.style.background = '#ffe6e6';
+                        messageDiv.style.color = '#cc0000';
+                        messageDiv.textContent = 'Invalid phone number: Email detected in phone field.';
+                        return;
+                    }
+
                     if (phone && !phone.startsWith('+')) {
+                        // Standardize to +91
                         if (phone.length === 10) {
                             phone = '+91' + phone;
+                        } else if (phone.startsWith('91') && phone.length === 12) {
+                            phone = '+' + phone;
                         } else if (!phone.startsWith('91')) {
                             phone = '+91' + phone;
                         } else {

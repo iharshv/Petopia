@@ -1,16 +1,57 @@
 const express = require('express');
 const cors = require('cors');
-const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const { ObjectId } = require('mongodb');
-const { connectToDatabase } = require('./_db');
 
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || 'petopia-secret-key';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Database Connection (Mongoose style like Crossfade)
+mongoose.connect(MONGODB_URI)
+    .then(() => console.log("MongoDB Connected (Petopia)"))
+    .catch(err => console.error("MongoDB Connection Error:", err));
+
+// Models (Matching Crossfade User.js)
+const userSchema = new mongoose.Schema({
+    name: String,
+    email: { type: String, lowercase: true, trim: true },
+    password: String, // Saved as plain text like Crossfade
+    role: { type: String, default: 'client' },
+    gender: String,
+    dob: String,
+    phone: String,
+    __v: { type: Number, default: 0 }
+}, { timestamps: true });
+
+const User = mongoose.model('User', userSchema);
+
+// Project Model (Matching Crossfade Project.js)
+const projectSchema = new mongoose.Schema({
+    title: String,
+    description: String,
+    petName: String,
+    petType: String,
+    service: String,
+    date: String,
+    time: String,
+    ownerName: String,
+    phone: String,
+    email: String,
+    notes: String,
+    status: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected', 'Completed'],
+        default: 'pending'
+    },
+    createdAt: { type: Date, default: Date.now }
+});
+
+const Project = mongoose.model('Project', projectSchema);
 
 // Helper: Auth Middleware
 const authenticateToken = (req, res, next) => {
@@ -28,79 +69,43 @@ const authenticateToken = (req, res, next) => {
     }
 };
 
-// Helper: Admin Middleware
-const adminOnly = (req, res, next) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ error: 'Access denied. Admins only.' });
-    }
-    next();
-};
-
 // Routes
 
-// Ping
-app.get('/api/ping', (req, res) => {
-    res.json({ status: 'ok', message: 'Petopia API is alive!', time: new Date().toISOString() });
-});
-
-// Auth: Register
+// Register
 app.post('/api/register', async (req, res) => {
     try {
-        const { name, email: rawEmail, phone, dob, gender, password } = req.body;
-        const email = rawEmail ? rawEmail.toLowerCase() : null;
-
-        if (!name || !email || !phone || !dob || !gender || !password) {
-            return res.status(400).json({ error: 'All fields are required' });
+        const { name, email, phone, dob, gender, password } = req.body;
+        if (!name || !email || !password) {
+            return res.status(400).json({ error: 'Name, email, and password are required' });
         }
 
-        const db = await connectToDatabase();
-        const users = db.collection('users');
-
-        const existingUser = await users.findOne({ email });
+        const existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
             return res.status(400).json({ error: 'Email already registered' });
         }
 
-        // Saving as plain text as per requested schema screenshot
-        const result = await users.insertOne({
-            name,
-            email,
-            password: password, // Plain text as requested
-            role: 'client',
-            __v: 0,
-            dob,
-            gender,
-            phone
-        });
+        const newUser = new User({ name, email, phone, dob, gender, password });
+        await newUser.save();
 
-        res.status(201).json({ success: true, message: 'Registration successful!', userId: result.insertedId });
+        res.status(201).json({ success: true, message: 'Registration successful!', user: newUser });
     } catch (error) {
         console.error('Registration error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
 
-// Auth: Login
+// Login
 app.post('/api/login', async (req, res) => {
     try {
-        const { email: rawEmail, password } = req.body;
-        const email = rawEmail ? rawEmail.toLowerCase() : null;
+        const { email, password } = req.body;
+        const user = await User.findOne({ email: email.toLowerCase(), password }); // Plain text check like Crossfade
 
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required' });
-        }
-
-        const db = await connectToDatabase();
-        const users = db.collection('users');
-
-        const user = await users.findOne({ email });
-        // Checking plain text password
-        if (!user || user.password !== password) {
+        if (!user) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
         const token = jwt.sign(
-            { userId: user._id, email: user.email, name: user.name, role: user.role || 'client' },
+            { userId: user._id, email: user.email, name: user.name, role: user.role },
             JWT_SECRET,
             { expiresIn: '7d' }
         );
@@ -108,22 +113,19 @@ app.post('/api/login', async (req, res) => {
         res.json({
             success: true,
             token,
-            user: { name: user.name, email: user.email, role: user.role || 'client' }
+            user: { name: user.name, email: user.email, role: user.role }
         });
     } catch (error) {
-        console.error('Login error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
 
-// Profile: Get & Update
+// Profile
 app.get('/api/profile', authenticateToken, async (req, res) => {
     try {
-        const db = await connectToDatabase();
-        const user = await db.collection('users').findOne({ _id: new ObjectId(req.user.userId) });
+        const user = await User.findById(req.user.userId);
         if (!user) return res.status(404).json({ error: 'User not found' });
-        const { password, ...userData } = user;
-        res.json(userData);
+        res.json(user);
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
@@ -132,83 +134,60 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
 app.post('/api/profile', authenticateToken, async (req, res) => {
     try {
         const { name, phone, dob, gender } = req.body;
-        const db = await connectToDatabase();
-        await db.collection('users').updateOne(
-            { _id: new ObjectId(req.user.userId) },
-            {
-                $set: { name, phone, dob, gender, updatedAt: new Date() },
-                $inc: { __v: 1 }
-            }
+        const user = await User.findByIdAndUpdate(
+            req.user.userId,
+            { $set: { name, phone, dob, gender } },
+            { new: true }
         );
-        res.json({ success: true, message: 'Profile updated!' });
+        res.json({ success: true, message: 'Profile updated!', user });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
 });
 
-// Projects (Appointments)
-// POST /api/projects - Create a new project (booking)
+// Projects
 app.post('/api/projects', async (req, res) => {
     try {
-        const { petName, petType, breed, service, date, time, ownerName, phone, email, notes } = req.body;
-        if (!petName || !petType || !service || !date || !time || !ownerName || !phone) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
-        const db = await connectToDatabase();
-        const result = await db.collection('bookings').insertOne({
-            petName, petType, breed: breed || '', service, date, time, ownerName, phone,
-            email: email || '', notes: notes || '', status: 'pending', createdAt: new Date()
-        });
-
-        res.status(201).json({ success: true, message: 'Project created!', projectId: result.insertedId });
+        const newProject = new Project(req.body);
+        await newProject.save();
+        res.status(201).json({ success: true, message: 'Project created!', projectId: newProject._id });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
 });
 
-// GET /api/projects - Fetch all projects (Admin)
-app.get('/api/projects', authenticateToken, adminOnly, async (req, res) => {
+app.get('/api/projects', authenticateToken, async (req, res) => {
     try {
-        const db = await connectToDatabase();
-        const projects = await db.collection('bookings').find({}).sort({ createdAt: -1 }).toArray();
+        if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+        const projects = await Project.find().sort({ createdAt: -1 });
         res.json(projects);
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
 });
 
-// GET /api/projects/my/:clientId - Get projects for client (using email or ID)
-app.get('/api/projects/my/:clientId', authenticateToken, async (req, res) => {
+app.get('/api/projects/my/:email', authenticateToken, async (req, res) => {
     try {
-        // Here clientId is typically the email from Crossfade patterns
-        const db = await connectToDatabase();
-        const projects = await db.collection('bookings').find({
-            email: req.params.clientId.toLowerCase()
-        }).sort({ createdAt: -1 }).toArray();
+        const projects = await Project.find({ email: req.params.email.toLowerCase() }).sort({ createdAt: -1 });
         res.json(projects);
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
 });
 
-// PUT /api/projects/:id/status - Update status
-app.put('/api/projects/:id/status', authenticateToken, adminOnly, async (req, res) => {
+app.put('/api/projects/:id/status', authenticateToken, async (req, res) => {
     try {
-        const { status } = req.body;
-        if (!['approved', 'rejected', 'pending'].includes(status)) {
-            return res.status(400).json({ error: 'Invalid status' });
-        }
-        const db = await connectToDatabase();
-        await db.collection('bookings').updateOne(
-            { _id: new ObjectId(req.params.id) },
-            { $set: { status, updatedAt: new Date() } }
-        );
-        res.json({ success: true, message: `Status updated to ${status}` });
+        if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+        await Project.findByIdAndUpdate(req.params.id, { $set: { status: req.body.status } });
+        res.json({ success: true, message: 'Status updated' });
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
 });
 
-// Export the Express app for Vercel
+// Ping
+app.get('/api/ping', (req, res) => {
+    res.json({ status: 'ok', message: 'Petopia API is alive!', time: new Date().toISOString() });
+});
+
 module.exports = app;
