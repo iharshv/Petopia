@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
@@ -25,8 +26,8 @@ app.use((req, res, next) => {
 if (!MONGODB_URI) {
     console.error("MONGODB_URI is not defined!");
 } else {
-    mongoose.connect(MONGODB_URI)
-        .then(() => console.log("MongoDB Connected (Modular)"))
+    mongoose.connect(MONGODB_URI, { dbName: 'petopia' })
+        .then(() => console.log("MongoDB Connected (Modular - petopia DB)"))
         .catch(err => console.error("MongoDB Connection Error:", err));
 }
 
