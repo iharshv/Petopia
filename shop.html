@@ -195,7 +195,7 @@
                 <ul class="nav-links" id="navLinks">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="shop.html" style="color: var(--primary);">Shop</a></li>
-                    <li><a href="reviews.html">Reviews</a></li>
+                    <li><a href="index.html#reviews">Reviews</a></li>
                     <li><a href="services.html">Services</a></li>
                     <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
                     </li>
@@ -217,43 +217,6 @@
         </div>
     </header>
 
-    <script>
-        function toggleMenu() {
-            const navLinks = document.getElementById('navLinks');
-            navLinks.classList.toggle('active');
-        }
-
-        // Auth Navigation Sync
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Nav version: 2.1.1');
-            const authLinks = document.querySelector('.auth-links');
-            const authMobile = document.getElementById('auth-mobile');
-            const token = localStorage.getItem('token');
-            const role = localStorage.getItem('userRole');
-
-            if (token) {
-                const profileLinks = `
-                    <a href="profile.html">Profile</a>
-                    ${role === 'admin' ? ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>` : ''}
-                    <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>
-                `;
-
-                if (authLinks) {
-                    authLinks.innerHTML = profileLinks;
-                }
-
-                if (authMobile) {
-                    authMobile.style.display = 'block';
-                    authMobile.innerHTML = profileLinks.replace(/\|/g, '<span style="color:#444">|</span>');
-                }
-            }
-        });
-
-        function handleLogout() {
-            localStorage.clear();
-            window.location.reload();
-        }
-    </script>
 
 
     <!-- Hero Section -->
