@@ -222,7 +222,10 @@
             }
 
             try {
-                const apiUrl = (window.API_BASE_URL || '') + '/api/profile';
+                const baseUrl = window.API_BASE_URL || '';
+                const apiUrl = baseUrl + '/api/profile';
+                console.log('[Profile] Fetching from:', apiUrl);
+
                 const response = await fetch(apiUrl, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -246,20 +249,23 @@
 
                     document.getElementById('avatar-initials').textContent = (user.name || 'P').charAt(0).toUpperCase();
 
-                    // Add Save Button
-                    const saveBtn = document.createElement('button');
-                    saveBtn.className = 'btn btn-primary';
-                    saveBtn.style = 'width: 100%; margin-top: 1rem; background: var(--primary);';
-                    saveBtn.textContent = 'Save Changes';
-                    saveBtn.onclick = saveProfile;
-                    document.getElementById('info-gender').parentElement.parentElement.appendChild(saveBtn);
+                    // Add Save Button if not already there
+                    if (!document.getElementById('save-profile-btn')) {
+                        const saveBtn = document.createElement('button');
+                        saveBtn.id = 'save-profile-btn';
+                        saveBtn.className = 'btn btn-primary';
+                        saveBtn.style = 'width: 100%; margin-top: 1rem; background: var(--primary);';
+                        saveBtn.textContent = 'Save Changes';
+                        saveBtn.onclick = saveProfile;
+                        document.getElementById('info-gender').parentElement.parentElement.appendChild(saveBtn);
+                    }
 
                     const currentRole = localStorage.getItem('userRole') || 'user';
                     const newRole = user.role || 'user';
 
                     if (newRole !== currentRole) {
                         localStorage.setItem('userRole', newRole);
-                        PetopiaAuth.sync();
+                        if (window.PetopiaAuth) PetopiaAuth.sync();
                     }
 
                     if (newRole !== 'admin') {
@@ -270,12 +276,15 @@
                     loadHistory();
 
                 } else {
-                    console.error('Profile fetch failed');
-                    localStorage.clear();
-                    window.location.href = 'login.html';
+                    const error = await response.text();
+                    console.error('Profile fetch failed:', response.status, error);
+                    document.getElementById('display-name').textContent = 'Error Loading Profile';
+                    document.getElementById('display-email').textContent = 'Please log out and try again.';
                 }
             } catch (error) {
-                console.error('Error fetching profile:', error);
+                console.error('Network Error:', error);
+                document.getElementById('display-name').textContent = 'Connection error';
+                document.getElementById('display-email').textContent = 'Please check your connection.';
             }
         });
 
