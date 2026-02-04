@@ -133,8 +133,7 @@
                     <li><a href="services.html">Services</a></li>
                     <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
                     </li>
-                    <li id="auth-mobile"
-                        style="margin-top: 10px; border-top: 1px solid #444; padding-top: 10px; display: none;"></li>
+
                 </ul>
 
                 <div class="nav-right">
@@ -215,7 +214,7 @@
         async function loadAppointments() {
             try {
                 const token = localStorage.getItem('token');
-                const apiUrl = (window.API_BASE_URL || '') + '/api/admin-appointments';
+                const apiUrl = (window.API_BASE_URL || '') + '/api/projects';
                 const response = await fetch(apiUrl, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -274,16 +273,16 @@
 
         async function updateStatus(bookingId, status) {
             const token = localStorage.getItem('token');
-            const apiUrl = (window.API_BASE_URL || '') + '/api/admin-appointments';
+            const apiUrl = (window.API_BASE_URL || '') + `/api/projects/${bookingId}/status`;
 
             try {
                 const response = await fetch(apiUrl, {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ bookingId, status })
+                    body: JSON.stringify({ status })
                 });
 
                 if (response.ok) {
@@ -296,46 +295,8 @@
             }
         }
 
-        // Auth Navigation Sync - Update Header
-        function updateHeader(role) {
-            console.log('Admin Page Nav Update:', role);
-            const authLinks = document.querySelector('.auth-links');
-            const authMobile = document.getElementById('auth-mobile');
-            const profileLinks = `
-                <a href="profile.html">Profile</a>
-                ${role === 'admin' ? ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>` : ''}
-                <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>
-            `;
-
-            if (authLinks) {
-                authLinks.innerHTML = profileLinks;
-            }
-            if (authMobile) {
-                authMobile.style.display = 'block';
-                authMobile.innerHTML = profileLinks.replace(/\|/g, '<span style="color:#444">|</span>');
-            }
-        }
-
-        // Run sync on load
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Nav version: 2.1.1 (Admin)');
-            const token = localStorage.getItem('token');
-            const role = localStorage.getItem('userRole');
-            if (token) {
-                updateHeader(role);
-            }
-        });
-
-        function toggleMenu() {
-            const navLinks = document.getElementById('navLinks');
-            navLinks.classList.toggle('active');
-        }
-
-        function handleLogout() {
-            localStorage.clear();
-            window.location.href = 'index.html';
-        }
     </script>
+    <script src="/auth-sync.js?v=2.2.0"></script>
 </body>
 
 </html>

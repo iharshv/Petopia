@@ -28,8 +28,7 @@
                     <li><a href="services.html">Services</a></li>
                     <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
                     </li>
-                    <li id="auth-mobile"
-                        style="margin-top: 10px; border-top: 1px solid #444; padding-top: 10px; display: none;"></li>
+
                 </ul>
 
                 <div class="nav-right">
@@ -142,6 +141,11 @@
                                 gender: document.getElementById('gender').value,
                                 password: password
                             })
+                        }).catch(err => {
+                            if (err.message === 'Failed to fetch') {
+                                throw new Error('Cannot reach the server. Please check the API URL in api-config.js or your internet connection.');
+                            }
+                            throw err;
                         });
 
                         let data;
@@ -150,7 +154,7 @@
                             data = await response.json();
                         } else {
                             const text = await response.text();
-                            throw new Error('Server returned non-JSON response: ' + text.substring(0, 100));
+                            throw new Error(`Server returned error (${response.status}). If you're on localhost, please ensure the backend is deployed.`);
                         }
 
                         if (data.success) {
@@ -172,16 +176,49 @@
                         messageDiv.style.display = 'block';
                         messageDiv.style.background = '#ffe6e6';
                         messageDiv.style.color = '#cc0000';
-                        messageDiv.textContent = 'Registration Error: ' + error.message;
+                        messageDiv.textContent = 'Network Error: ' + error.message;
                         submitBtn.textContent = 'Create Account';
                         submitBtn.disabled = false;
                     }
                 });
             </script>
+            <div style="text-align: center; margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem;">
+                <p style="font-size: 0.8rem; color: #888;">Trouble connecting?</p>
+                <button type="button" onclick="checkConnection()"
+                    style="background: none; border: none; color: var(--primary); text-decoration: underline; cursor: pointer; font-size: 0.8rem;">
+                    Check Backend Status
+                </button>
+                <p id="connection-status" style="font-size: 0.75rem; margin-top: 0.5rem;"></p>
+            </div>
             <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem;">
                 Already have an account? <a href="login.html" style="color: var(--primary); font-weight: 600;">Login
                     here</a>
             </p>
+            <script>
+                async function checkConnection() {
+                    const statusEl = document.getElementById('connection-status');
+                    const apiUrl = (window.API_BASE_URL || '') + '/api/ping';
+                    statusEl.textContent = 'Checking connection...';
+                    statusEl.style.color = '#666';
+
+                    try {
+                        const start = Date.now();
+                        const response = await fetch(apiUrl);
+                        const data = await response.json();
+                        const duration = Date.now() - start;
+                        if (data.status === 'ok') {
+                            statusEl.textContent = `✅ Backend is online (${duration}ms)`;
+                            statusEl.style.color = 'green';
+                        } else {
+                            statusEl.textContent = '⚠️ Backend responded with an error.';
+                            statusEl.style.color = 'orange';
+                        }
+                    } catch (err) {
+                        statusEl.textContent = '❌ Cannot reach backend: ' + err.message;
+                        statusEl.style.color = 'red';
+                    }
+                }
+            </script>
         </div>
     </div>
 

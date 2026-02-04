@@ -233,6 +233,24 @@ header {
   .hamburger {
     display: block;
   }
+
+  #auth-mobile {
+    display: block !important;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #444;
+    width: 100%;
+    text-align: center;
+  }
+
+  #auth-mobile a {
+    color: var(--white);
+    font-weight: 600;
+  }
+}
+
+#auth-mobile {
+  display: none !important;
 }
 
 /* Hero Section */

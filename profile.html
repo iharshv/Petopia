@@ -156,54 +156,122 @@
     <div class="container">
         <div class="profile-container">
             <div id="message"></div>
+
+            <!-- Profile Header -->
             <div class="profile-header">
                 <div class="profile-avatar" id="avatar-initials">P</div>
                 <h2 id="display-name">Loading...</h2>
                 <p id="display-email">Loading...</p>
+                <div id="display-role" class="status-pill status-approved"
+                    style="display: inline-block; margin-top: 0.5rem;">Client</div>
             </div>
 
-            <div class="profile-form-group">
-                <label>Full Name</label>
-                <div class="profile-info" id="info-name">-</div>
-            </div>
-
-            <div class="profile-form-group">
-                <label>Phone Number</label>
-                <div class="profile-info" id="info-phone">-</div>
-            </div>
-
-            <div class="row">
-                <div class="profile-form-group" style="flex: 1; margin-right: 1rem;">
-                    <label>Date of Birth</label>
-                    <div class="profile-info" id="info-dob">-</div>
+            <!-- Stats Grid -->
+            <div class="stats-grid"
+                style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                <div class="stat-card"
+                    style="background: #f0f4f8; padding: 1rem; border-radius: 15px; text-align: center;">
+                    <i class="fas fa-calendar-check"
+                        style="color: var(--primary); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                    <div style="font-size: 1.2rem; font-weight: bold;" id="stat-appointments">0</div>
+                    <div style="font-size: 0.75rem; color: #666;">Total Appointments</div>
                 </div>
-                <div class="profile-form-group" style="flex: 1;">
-                    <label>Gender</label>
-                    <div class="profile-info" id="info-gender">-</div>
+                <div class="stat-card"
+                    style="background: #f0f4f8; padding: 1rem; border-radius: 15px; text-align: center;">
+                    <i class="fas fa-user-clock"
+                        style="color: var(--primary); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                    <div style="font-size: 1.2rem; font-weight: bold;" id="stat-joined"> - </div>
+                    <div style="font-size: 0.75rem; color: #666;">Member Since</div>
                 </div>
             </div>
 
-            <button onclick="handleLogout()" class="btn btn-primary logout-btn" style="width: 100%;">
+            <!-- Profile Details -->
+            <div class="profile-section">
+                <h3
+                    style="margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 2px solid var(--primary); display: inline-block;">
+                    Personal Information</h3>
+
+                <div class="row" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="profile-form-group" style="flex: 1;">
+                        <label><i class="fas fa-user"></i> Full Name</label>
+                        <div class="profile-info" id="info-name">-</div>
+                    </div>
+                    <div class="profile-form-group" style="flex: 1;">
+                        <label><i class="fas fa-envelope"></i> Email Address</label>
+                        <div class="profile-info" id="info-email">-</div>
+                    </div>
+                </div>
+
+                <div class="row" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="profile-form-group" style="flex: 1;">
+                        <label><i class="fas fa-venus-mars"></i> Gender</label>
+                        <div class="profile-info" id="info-gender">-</div>
+                    </div>
+                    <div class="profile-form-group" style="flex: 1;">
+                        <label><i class="fas fa-birthday-cake"></i> Date of Birth</label>
+                        <div class="profile-info" id="info-dob">-</div>
+                    </div>
+                </div>
+
+                <div class="profile-form-group">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <div class="profile-info" id="info-phone">-</div>
+                </div>
+            </div>
+
+            <!-- Account Settings Placeholder -->
+            <div class="profile-section" style="margin-top: 2rem;">
+                <h3
+                    style="margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 2px solid var(--primary); display: inline-block;">
+                    Account Settings</h3>
+                <div class="profile-info" style="color: #666; font-size: 0.9rem; font-style: italic;">
+                    Security, Notifications, and Privacy settings coming soon.
+                </div>
+            </div>
+
+            <div id="save-btn-container"></div>
+
+            <button onclick="handleLogout()" class="btn btn-primary logout-btn"
+                style="width: 100%; border-radius: 10px;">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
 
+            <!-- Admin Activation -->
             <div id="admin-activation"
-                style="margin-top: 2rem; padding: 1rem; background: #f0f4f8; border-radius: 10px; display: none; text-align: left;">
-                <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.5rem; font-weight: bold;">Developer Settings:
-                    Admin Activation</p>
+                style="margin-top: 2rem; padding: 1rem; background: #fff3cd; border-radius: 15px; border: 1px dashed #ffeeba; display: none; text-align: left;">
+                <p style="font-size: 0.8rem; color: #856404; margin-bottom: 0.5rem; font-weight: bold;">
+                    <i class="fas fa-shield-alt"></i> Developer: Admin Activation
+                </p>
                 <div style="display: flex; gap: 0.5rem;">
-                    <input type="password" id="admin-secret" placeholder="Secret Key"
-                        style="flex: 1; padding: 0.5rem; border-radius: 5px; border: 1px solid #ddd;">
+                    <input type="password" id="admin-secret" placeholder="Enter Secret Key"
+                        style="flex: 1; padding: 0.5rem; border-radius: 8px; border: 1px solid #ddd;">
                     <button onclick="activateAdmin()" class="btn btn-primary"
-                        style="padding: 0.5rem 1rem; font-size: 0.8rem;">Activate</button>
+                        style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: 8px;">Activate</button>
                 </div>
                 <p id="admin-message" style="font-size: 0.75rem; margin-top: 0.5rem;"></p>
             </div>
 
+            <!-- My Pets Section -->
+            <div id="pets-section"
+                style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 2rem; display: none;">
+                <h3
+                    style="margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 2px solid var(--primary); display: inline-block;">
+                    <i class="fas fa-paw"></i> My Pets
+                </h3>
+                <div id="pets-list" style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem;">
+                    <!-- Pets will be populated here -->
+                </div>
+            </div>
+
+            <!-- History Section -->
             <div class="history-section">
-                <h3>Appointment History</h3>
+                <h3><i class="fas fa-history"></i> Appointment History</h3>
                 <div id="history-list">
-                    <p style="text-align: center; color: #888; padding: 1rem;">No history found.</p>
+                    <p style="text-align: center; color: #888; padding: 2rem;">
+                        <i class="fas fa-clipboard-list"
+                            style="display: block; font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                        No history found.
+                    </p>
                 </div>
             </div>
         </div>
@@ -229,13 +297,19 @@
                 const response = await fetch(apiUrl, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                console.log('[Profile] API:', apiUrl, 'Status:', response.status);
 
                 if (response.ok) {
                     const user = await response.json();
 
                     // Update UI fields
-                    document.getElementById('display-name').textContent = user.name || 'User';
+                    document.getElementById('display-name').textContent = user.name || 'Client';
+                    const roleEl = document.getElementById('display-role');
+                    roleEl.textContent = user.role === 'admin' ? 'Administrator' : 'Client';
+                    roleEl.className = `status-pill status-${user.role === 'admin' ? 'approved' : 'pending'}`;
+
                     document.getElementById('display-email').textContent = user.email;
+                    document.getElementById('info-email').innerHTML = `<input type="text" value="${user.email}" readonly style="width: 100%; border: none; background: transparent; font: inherit; color: #888; cursor: not-allowed;">`;
                     document.getElementById('info-name').innerHTML = `<input type="text" id="edit-name" value="${user.name}" style="width: 100%; border: none; background: transparent; font: inherit;">`;
                     document.getElementById('info-phone').innerHTML = `<input type="text" id="edit-phone" value="${user.phone || ''}" placeholder="Enter phone" style="width: 100%; border: none; background: transparent; font: inherit;">`;
                     document.getElementById('info-dob').innerHTML = `<input type="date" id="edit-dob" value="${user.dob || ''}" style="width: 100%; border: none; background: transparent; font: inherit;">`;
@@ -249,19 +323,26 @@
 
                     document.getElementById('avatar-initials').textContent = (user.name || 'P').charAt(0).toUpperCase();
 
+                    // Set Member Since
+                    if (user.createdAt) {
+                        const joinedDate = new Date(user.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+                        document.getElementById('stat-joined').textContent = joinedDate;
+                    }
+
                     // Add Save Button if not already there
+                    const saveBtnContainer = document.getElementById('save-btn-container');
                     if (!document.getElementById('save-profile-btn')) {
                         const saveBtn = document.createElement('button');
                         saveBtn.id = 'save-profile-btn';
                         saveBtn.className = 'btn btn-primary';
-                        saveBtn.style = 'width: 100%; margin-top: 1rem; background: var(--primary);';
+                        saveBtn.style = 'width: 100%; margin: 1rem 0; background: var(--primary); border-radius: 10px;';
                         saveBtn.textContent = 'Save Changes';
                         saveBtn.onclick = saveProfile;
-                        document.getElementById('info-gender').parentElement.parentElement.appendChild(saveBtn);
+                        saveBtnContainer.appendChild(saveBtn);
                     }
 
-                    const currentRole = localStorage.getItem('userRole') || 'user';
-                    const newRole = user.role || 'user';
+                    const currentRole = localStorage.getItem('userRole') || 'client';
+                    const newRole = user.role || 'client';
 
                     if (newRole !== currentRole) {
                         localStorage.setItem('userRole', newRole);
@@ -273,7 +354,7 @@
                     }
 
                     // Load History
-                    loadHistory();
+                    await loadHistory();
 
                 } else {
                     const error = await response.text();
@@ -320,28 +401,64 @@
         async function loadHistory() {
             const token = localStorage.getItem('token');
             try {
-                const apiUrl = (window.API_BASE_URL || '') + '/api/user-appointments';
+                const apiUrl = (window.API_BASE_URL || '') + '/api/projects/my/' + encodeURIComponent(localStorage.getItem('userEmail'));
                 const response = await fetch(apiUrl, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 if (response.ok) {
                     const data = await response.json();
+
+                    // Update stats
+                    document.getElementById('stat-appointments').textContent = data.length;
+
+                    // Populate Pets Section
+                    const petsSection = document.getElementById('pets-section');
+                    const petsList = document.getElementById('pets-list');
+                    const uniquePets = [];
+                    const petNames = new Set();
+
+                    data.forEach(booking => {
+                        if (booking.petName && !petNames.has(booking.petName.toLowerCase())) {
+                            petNames.add(booking.petName.toLowerCase());
+                            uniquePets.push({
+                                name: booking.petName,
+                                type: booking.petType,
+                                breed: booking.breed
+                            });
+                        }
+                    });
+
+                    if (uniquePets.length > 0) {
+                        petsSection.style.display = 'block';
+                        petsList.innerHTML = uniquePets.map(pet => `
+                            <div class="pet-chip" style="background: #f0f4f8; padding: 0.5rem 1rem; border-radius: 20px; white-space: nowrap; border: 1px solid #d1d9e6;">
+                                <i class="fas fa-${pet.type.toLowerCase().includes('dog') ? 'dog' : 'cat'}" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                                <span style="font-weight: 600;">${pet.name}</span>
+                                <span style="font-size: 0.75rem; color: #666; margin-left: 0.3rem;">(${pet.breed || pet.type})</span>
+                            </div>
+                        `).join('');
+                    }
+
                     const list = document.getElementById('history-list');
                     if (data.length === 0) {
-                        list.innerHTML = '<p style="text-align: center; color: #888; padding: 1rem;">No history found.</p>';
+                        list.innerHTML = `
+                            <p style="text-align: center; color: #888; padding: 2rem;">
+                                <i class="fas fa-clipboard-list" style="display: block; font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                                No appointments found yet.
+                            </p>`;
                         return;
                     }
                     list.innerHTML = data.map(item => `
-                        <div class="history-item">
+                        <div class="history-item" style="background: white; border-radius: 12px; transition: transform 0.2s;">
                             <div class="history-details">
-                                <h4>${item.service}</h4>
-                                <p>${item.date} at ${item.time}</p>
-                                <p><small>${item.petName} (${item.petType})</small></p>
+                                <h4 style="color: var(--secondary-color);">${item.service}</h4>
+                                <p style="font-size: 0.85rem; color: #555;"><i class="far fa-calendar-alt"></i> ${item.date} at ${item.time}</p>
+                                <p style="font-size: 0.8rem;"><i class="fas fa-paw"></i> ${item.petName} <span style="color: #888;">(${item.petType})</span></p>
                             </div>
                             <span class="status-pill status-${item.status}">${item.status}</span>
                         </div>
-                    `).join('');
+                    `).sort((a, b) => new Date(b.date) - new Date(a.date)).join('');
                 }
             } catch (error) {
                 console.error('History error:', error);

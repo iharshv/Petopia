@@ -9,7 +9,7 @@ window.PetopiaAuth = {
     // Sync UI based on current auth state
     sync: async function () {
         const token = localStorage.getItem('token');
-        const role = localStorage.getItem('userRole') || 'user';
+        const role = localStorage.getItem('userRole') || 'client';
 
         console.log(`[PetopiaAuth] Syncing... Token: ${token ? 'Present' : 'Missing'}, Role: ${role}`);
 
@@ -30,15 +30,8 @@ window.PetopiaAuth = {
             }
 
             if (authMobile) {
-                // Only show on mobile screens
                 authMobile.innerHTML = profileLinks.replace(/\|/g, '<span style="color:#444">|</span>');
                 authMobile.classList.add('is-authenticated');
-                // Check if we are on mobile to handle display
-                if (window.innerWidth <= 768) {
-                    authMobile.style.display = 'block';
-                } else {
-                    authMobile.style.display = 'none';
-                }
             }
 
             // Fetch latest profile to sync role (silent update)
@@ -73,7 +66,7 @@ window.PetopiaAuth = {
 
                 // Update storage
                 localStorage.setItem('userName', user.name);
-                localStorage.setItem('userRole', user.role || 'user');
+                localStorage.setItem('userRole', user.role || 'client');
 
                 // If role changed, re-sync UI
                 if (user.role !== oldRole) {

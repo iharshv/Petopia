@@ -27,8 +27,7 @@
                     <li><a href="services.html">Services</a></li>
                     <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
                     </li>
-                    <li id="auth-mobile"
-                        style="margin-top: 10px; border-top: 1px solid #444; padding-top: 10px; display: none;"></li>
+
                 </ul>
 
                 <div class="nav-right">
@@ -121,43 +120,7 @@
     </footer>
 
     <script src="/api-config.js"></script>
-    <script>
-        function toggleMenu() {
-            const navLinks = document.getElementById('navLinks');
-            navLinks.classList.toggle('active');
-        }
-
-        function handleLogout() {
-            localStorage.clear();
-            window.location.reload();
-        }
-
-        // Auth Navigation Sync
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('Nav version: 2.1.1');
-            const authLinks = document.querySelector('.auth-links');
-            const authMobile = document.getElementById('auth-mobile');
-            const token = localStorage.getItem('token');
-            const role = localStorage.getItem('userRole');
-
-            if (token) {
-                const profileLinks = `
-                    <a href="profile.html">Profile</a>
-                    ${role === 'admin' ? ` <span style="color: var(--primary);">|</span> <a href="admin.html">Admin Panel</a>` : ''}
-                    <span style="color: var(--primary);">|</span> <a href="#" onclick="handleLogout()">Logout</a>
-                `;
-
-                if (authLinks) {
-                    authLinks.innerHTML = profileLinks;
-                }
-
-                if (authMobile) {
-                    authMobile.style.display = 'block';
-                    authMobile.innerHTML = profileLinks.replace(/\|/g, '<span style="color:#444">|</span>');
-                }
-            }
-        });
-    </script>
+    <script src="/auth-sync.js?v=2.2.0"></script>
 </body>
 
 </html>
