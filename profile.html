@@ -64,12 +64,55 @@
             background: #ff6b81;
         }
 
-        #message {
+        .history-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 1rem;
+            background: #f9f9f9;
             border-radius: 10px;
             margin-bottom: 1rem;
-            display: none;
-            text-align: center;
+            border: 1px solid #eee;
+        }
+
+        .history-details h4 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .history-details p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
@@ -156,6 +199,13 @@
                 </div>
                 <p id="admin-message" style="font-size: 0.75rem; margin-top: 0.5rem;"></p>
             </div>
+
+            <div class="history-section">
+                <h3>Appointment History</h3>
+                <div id="history-list">
+                    <p style="text-align: center; color: #888; padding: 1rem;">No history found.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -174,21 +224,35 @@
             try {
                 const apiUrl = (window.API_BASE_URL || '') + '/api/profile';
                 const response = await fetch(apiUrl, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 if (response.ok) {
                     const user = await response.json();
-                    document.getElementById('display-name').textContent = user.name;
-                    document.getElementById('display-email').textContent = user.email;
-                    document.getElementById('info-name').textContent = user.name;
-                    document.getElementById('info-phone').textContent = user.phone || 'Not provided';
-                    document.getElementById('info-dob').textContent = user.dob || 'Not provided';
-                    document.getElementById('info-gender').textContent = user.gender || 'Not provided';
 
-                    document.getElementById('avatar-initials').textContent = user.name.charAt(0).toUpperCase();
+                    // Update UI fields
+                    document.getElementById('display-name').textContent = user.name || 'User';
+                    document.getElementById('display-email').textContent = user.email;
+                    document.getElementById('info-name').innerHTML = `<input type="text" id="edit-name" value="${user.name}" style="width: 100%; border: none; background: transparent; font: inherit;">`;
+                    document.getElementById('info-phone').innerHTML = `<input type="text" id="edit-phone" value="${user.phone || ''}" placeholder="Enter phone" style="width: 100%; border: none; background: transparent; font: inherit;">`;
+                    document.getElementById('info-dob').innerHTML = `<input type="date" id="edit-dob" value="${user.dob || ''}" style="width: 100%; border: none; background: transparent; font: inherit;">`;
+                    document.getElementById('info-gender').innerHTML = `
+                        <select id="edit-gender" style="width: 100%; border: none; background: transparent; font: inherit;">
+                            <option value="">Select</option>
+                            <option value="male" ${user.gender === 'male' ? 'selected' : ''}>Male</option>
+                            <option value="female" ${user.gender === 'female' ? 'selected' : ''}>Female</option>
+                            <option value="other" ${user.gender === 'other' ? 'selected' : ''}>Other</option>
+                        </select>`;
+
+                    document.getElementById('avatar-initials').textContent = (user.name || 'P').charAt(0).toUpperCase();
+
+                    // Add Save Button
+                    const saveBtn = document.createElement('button');
+                    saveBtn.className = 'btn btn-primary';
+                    saveBtn.style = 'width: 100%; margin-top: 1rem; background: var(--primary);';
+                    saveBtn.textContent = 'Save Changes';
+                    saveBtn.onclick = saveProfile;
+                    document.getElementById('info-gender').parentElement.parentElement.appendChild(saveBtn);
 
                     const currentRole = localStorage.getItem('userRole') || 'user';
                     const newRole = user.role || 'user';
@@ -198,11 +262,15 @@
                         PetopiaAuth.sync();
                     }
 
-                    // Show admin activation if not admin
                     if (newRole !== 'admin') {
                         document.getElementById('admin-activation').style.display = 'block';
                     }
+
+                    // Load History
+                    loadHistory();
+
                 } else {
+                    console.error('Profile fetch failed');
                     localStorage.clear();
                     window.location.href = 'login.html';
                 }
@@ -210,6 +278,66 @@
                 console.error('Error fetching profile:', error);
             }
         });
+
+        async function saveProfile() {
+            const token = localStorage.getItem('token');
+            const name = document.getElementById('edit-name').value;
+            const phone = document.getElementById('edit-phone').value;
+            const dob = document.getElementById('edit-dob').value;
+            const gender = document.getElementById('edit-gender').value;
+
+            try {
+                const apiUrl = (window.API_BASE_URL || '') + '/api/profile';
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, phone, dob, gender })
+                });
+
+                if (response.ok) {
+                    alert('Profile updated successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Failed to update profile.');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+            }
+        }
+
+        async function loadHistory() {
+            const token = localStorage.getItem('token');
+            try {
+                const apiUrl = (window.API_BASE_URL || '') + '/api/user-appointments';
+                const response = await fetch(apiUrl, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const list = document.getElementById('history-list');
+                    if (data.length === 0) {
+                        list.innerHTML = '<p style="text-align: center; color: #888; padding: 1rem;">No history found.</p>';
+                        return;
+                    }
+                    list.innerHTML = data.map(item => `
+                        <div class="history-item">
+                            <div class="history-details">
+                                <h4>${item.service}</h4>
+                                <p>${item.date} at ${item.time}</p>
+                                <p><small>${item.petName} (${item.petType})</small></p>
+                            </div>
+                            <span class="status-pill status-${item.status}">${item.status}</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('History error:', error);
+            }
+        }
 
         async function activateAdmin() {
             const secret = document.getElementById('admin-secret').value;
