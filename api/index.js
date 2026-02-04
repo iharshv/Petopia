@@ -12,9 +12,13 @@ app.use(cors());
 app.use(express.json());
 
 // Database Connection (Mongoose style like Crossfade)
-mongoose.connect(MONGODB_URI)
-    .then(() => console.log("MongoDB Connected (Petopia)"))
-    .catch(err => console.error("MongoDB Connection Error:", err));
+if (!MONGODB_URI) {
+    console.error("MONGODB_URI is not defined!");
+} else {
+    mongoose.connect(MONGODB_URI)
+        .then(() => console.log("MongoDB Connected (Petopia)"))
+        .catch(err => console.error("MongoDB Connection Error:", err));
+}
 
 // Models (Matching Crossfade User.js)
 const userSchema = new mongoose.Schema({
@@ -187,11 +191,15 @@ app.put('/api/projects/:id/status', authenticateToken, async (req, res) => {
 
 // Ping
 app.get('/api/ping', (req, res) => {
-    res.json({ status: 'ok', message: 'Petopia API is alive! (express-centralized-v1)', time: new Date().toISOString() });
+    res.json({ status: 'ok', message: 'Petopia API is alive! (express-centralized-v2)', time: new Date().toISOString() });
 });
 
 app.get('/api/test-deployment', (req, res) => {
-    res.json({ success: true, message: 'New Express Deployment is LIVE!' });
+    res.json({ success: true, message: 'New Express Deployment v2 is LIVE!' });
+});
+
+app.get('/api', (req, res) => {
+    res.json({ message: 'Petopia Express API Root', version: '2.0.0' });
 });
 
 module.exports = app;
