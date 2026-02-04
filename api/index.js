@@ -11,6 +11,12 @@ const MONGODB_URI = process.env.MONGODB_URI;
 app.use(cors());
 app.use(express.json());
 
+// Debug Middleware
+app.use((req, res, next) => {
+    console.log(`[Request] ${req.method} ${req.url}`);
+    next();
+});
+
 // Database Connection (Mongoose style like Crossfade)
 if (!MONGODB_URI) {
     console.error("MONGODB_URI is not defined!");
