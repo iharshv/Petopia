@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Petopia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 2rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-table-container {
+            overflow-x: auto;
+            margin-top: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        #stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <img src="assets/logo-white.png" alt="Petopia Logo">
+                </a>
+
+                <div class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html#why-petopia">Why Petopia</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="index.html#reviews">Reviews</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
+                    </li>
+
+                </ul>
+
+                <div class="nav-right">
+                    <div class="nav-contact-items">
+                        <a href="tel:+919987801581"><i class="fas fa-phone-alt"
+                                style="margin-right: 5px; color: var(--primary);"></i>+91 99878 01581</a>
+                        <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6" target="_blank"
+                            style="text-decoration: underline; font-size: 0.8rem;">Airoli, Navi Mumbai</a>
+                    </div>
+                    <div class="auth-links" style="color: white; margin-left: 15px;">
+                        <a href="login.html">Login</a> <span style="color: var(--primary);">|</span> <a
+                            href="register.html">Register</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <!-- VERSION BANNER -->
+        <div
+            style="background: #ff4757; color: white; padding: 1rem; text-align: center; border-radius: 8px; margin-bottom: 2rem; font-weight: bold; box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);">
+            SYSTEM UPDATED: v5.0 (User Management Enabled)
+        </div>
+
+        <!-- User Management Section (MOVED TO TOP) -->
+        <div class="dashboard-card" style="margin-bottom: 2rem;">
+            <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2>User Management</h2>
+                    <p>Manage registered users and admins</p>
+                </div>
+                <button onclick="openUserModal()" class="btn btn-primary"><i class="fas fa-plus"></i> Add User</button>
+            </div>
+
+            <div class="admin-table-container">
+                <table id="users-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Phone</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-list">
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Loading users... (System v5.0 Check)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div
+                style="text-align: center; margin-top: 3rem; border-top: 1px solid #333; padding-top: 1rem; font-size: 0.8rem; color: #888; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                <span>&copy; 2026 Petopia. All rights reserved.</span>
+                <span
+                    style="background: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">v5.0-deployed</span>
+            </div>
+        </div>
+
+        <!-- Appointment Management Section -->
+        <div class="dashboard-card">
+            <div class="profile-header">
+                <h2>Appointment Management</h2>
+                <p>Approve or manage upcoming pet care requests</p>
+                <span
+                    style="background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">System
+                    v5.0</span>
+            </div>
+
+            <div id="stats-bar">
+                <div class="stat-card">
+                    <h3 id="stat-total">0</h3>
+                    <p>Total Requests</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-pending">0</h3>
+                    <p>Pending Approval</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="stat-today">0</h3>
+                    <p>Appointments Today</p>
+                </div>
+            </div>
+
+            <div class="admin-table-container">
+                <table id="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Owner & Pet</th>
+                            <th>Service</th>
+                            <th>Date & Time</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointments-list">
+                        <tr>
+                            <td colspan="6" style="text-align: center;">Loading appointments...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- User Modal -->
+    <div id="userModal" class="modal"
+        style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+        <div class="modal-content"
+            style="background-color: #fefefe; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 500px; border-radius: 10px;">
+            <span class="close" onclick="closeUserModal()"
+                style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            <h2 id="modalTitle">Add User</h2>
+            <form id="userForm" style="margin-top: 1rem;">
+                <input type="hidden" id="userId">
+                <div style="margin-bottom: 1rem;">
+                    <label>Full Name</label>
+                    <input type="text" id="userName" required style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label>Email</label>
+                    <input type="email" id="userEmail" required
+                        style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label>Password</label>
+                    <input type="text" id="userPassword" placeholder="Leave empty to keep unchanged"
+                        style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label>Role</label>
+                        <select id="userRole" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                            <option value="client">Client</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Phone</label>
+                        <input type="text" id="userPhone" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save User</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="api-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('userRole');
+
+            if (!token || role !== 'admin') {
+                alert('Access Denied: Admins Only');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // aggressive flush
+            console.log('Admin Panel v5.0 Loaded');
+            // alert('Admin Panel v5.0 Loaded'); // Optional: uncomment if user is really stuck
+
+            loadAppointments();
+            loadUsers();
+        });
+
+        // --- APPOINTMENTS LOGIC ---
+
+
+        async function loadAppointments() {
+            try {
+                const token = localStorage.getItem('token');
+                const apiUrl = (window.API_BASE_URL || '') + '/api/projects';
+                const response = await fetch(apiUrl, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const bookings = await response.json();
+                    updateStats(bookings);
+                    renderTable(bookings);
+                } else {
+                    const errorText = await response.text();
+                    console.error('Failed to load:', response.status, errorText);
+                    document.getElementById('appointments-list').innerHTML = `
+                        <tr><td colspan="6" style="text-align: center; color: red;">
+                            Error loading data: ${response.status} ${response.statusText}
+                        </td></tr>`;
+
+                    if (response.status === 401 || response.status === 403) {
+                        alert('Session expired or unauthorized. Please login again.');
+                        localStorage.removeItem('token');
+                        window.location.href = 'login.html';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                document.getElementById('appointments-list').innerHTML = `
+                    <tr><td colspan="6" style="text-align: center; color: red;">
+                        Connection Error: ${error.message}
+                    </td></tr>`;
+            }
+        }
+
+        function updateStats(bookings) {
+            document.getElementById('stat-total').textContent = bookings.length;
+            document.getElementById('stat-pending').textContent = bookings.filter(b => b.status === 'pending').length;
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('stat-today').textContent = bookings.filter(b => b.date === today).length;
+        }
+
+        function renderTable(bookings) {
+            const list = document.getElementById('appointments-list');
+            if (bookings.length === 0) {
+                list.innerHTML = '<tr><td colspan="6" style="text-align: center;">No appointments found.</td></tr>';
+                return;
+            }
+
+            list.innerHTML = bookings.map(b => `
+                <tr>
+                    <td>
+                        <strong>${b.ownerName}</strong><br>
+                        <small>${b.petName} (${b.petType})</small>
+                    </td>
+                    <td>${b.service}</td>
+                    <td>
+                        ${b.date}<br>
+                        <small>${b.time}</small>
+                    </td>
+                    <td>${b.phone}</td>
+                    <td>
+                        <span class="status-badge status-${b.status}">${b.status}</span>
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            ${b.status === 'pending' ? `
+                                <button onclick="updateStatus('${b._id}', 'approved')" class="btn btn-sm btn-approve">Approve</button>
+                                <button onclick="updateStatus('${b._id}', 'rejected')" class="btn btn-sm btn-reject">Reject</button>
+                            ` : `<small>Completed</small>`}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function updateStatus(bookingId, status) {
+            const token = localStorage.getItem('token');
+            const apiUrl = (window.API_BASE_URL || '') + `/api/projects/${bookingId}/status`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                if (response.ok) {
+                    loadAppointments();
+                } else {
+                    alert('Failed to update status');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        // --- USER MANAGEMENT LOGIC ---
+
+        async function loadUsers() {
+            try {
+                const token = localStorage.getItem('token');
+                const apiUrl = (window.API_BASE_URL || '') + '/api/users';
+                const response = await fetch(apiUrl, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const users = await response.json();
+                    renderUsers(users);
+                } else {
+                    console.error('Failed to load users');
+                    document.getElementById('users-list').innerHTML = `
+                        <tr><td colspan="5" style="text-align: center; color: red;">
+                            Error: ${response.status} ${response.statusText}
+                        </td></tr>`;
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('users-list').innerHTML = `
+                        <tr><td colspan="5" style="text-align: center; color: red;">
+                            Connection Error: ${error.message}
+                        </td></tr>`;
+            }
+        }
+
+        function renderUsers(users) {
+            const list = document.getElementById('users-list');
+            if (users.length === 0) {
+                list.innerHTML = '<tr><td colspan="5" style="text-align: center;">No users found.</td></tr>';
+                return;
+            }
+            list.innerHTML = users.map(u => `
+                <tr>
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td><span class="status-badge status-${u.role === 'admin' ? 'approved' : 'pending'}">${u.role}</span></td>
+                    <td>${u.phone || '-'}</td>
+                    <td>
+                        <button onclick="editUser('${u._id}', '${u.name}', '${u.email}', '${u.role}', '${u.phone || ''}')" class="btn btn-sm" style="background: #ffc107; color: black;">Edit</button>
+                        <button onclick="deleteUser('${u._id}')" class="btn btn-sm btn-reject">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Modal Functions
+        function openUserModal() {
+            document.getElementById('userModal').style.display = 'block';
+            document.getElementById('modalTitle').textContent = 'Add User';
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        function editUser(id, name, email, role, phone) {
+            document.getElementById('userModal').style.display = 'block';
+            document.getElementById('modalTitle').textContent = 'Edit User';
+            document.getElementById('userId').value = id;
+            document.getElementById('userName').value = name;
+            document.getElementById('userEmail').value = email;
+            document.getElementById('userRole').value = role;
+            document.getElementById('userPhone').value = phone;
+            document.getElementById('userPassword').value = ''; // Don't show password
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Are you sure you want to delete this user? This cannot be undone.')) return;
+
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch((window.API_BASE_URL || '') + `/api/users/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    loadUsers();
+                } else {
+                    alert('Failed to delete user');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+            }
+        }
+
+        // Handle User Form Submit
+        document.getElementById('userForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const id = document.getElementById('userId').value;
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const role = document.getElementById('userRole').value;
+            const phone = document.getElementById('userPhone').value;
+            const password = document.getElementById('userPassword').value;
+
+            const token = localStorage.getItem('token');
+            const method = id ? 'PUT' : 'POST';
+            const url = (window.API_BASE_URL || '') + (id ? `/api/users/${id}` : '/api/users');
+
+            const body = { name, email, role, phone };
+            if (password) body.password = password; // Only send password if provided
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.ok) {
+                    closeUserModal();
+                    loadUsers();
+                    alert(id ? 'User updated!' : 'User created!');
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Operation failed');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+            }
+        });
+
+    </script>
+    <script src="auth-sync.js?v=2.2.0"></script>
+</body>
+
+</html>
