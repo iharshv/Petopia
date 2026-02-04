@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
     const token = authHeader.split(' ')[1];
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'petopia-secret-key');
         const db = await connectToDatabase();
         const users = db.collection('users');
 
