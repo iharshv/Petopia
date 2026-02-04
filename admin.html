@@ -223,9 +223,26 @@
                     const bookings = await response.json();
                     updateStats(bookings);
                     renderTable(bookings);
+                } else {
+                    const errorText = await response.text();
+                    console.error('Failed to load:', response.status, errorText);
+                    document.getElementById('appointments-list').innerHTML = `
+                        <tr><td colspan="6" style="text-align: center; color: red;">
+                            Error loading data: ${response.status} ${response.statusText}
+                        </td></tr>`;
+
+                    if (response.status === 401 || response.status === 403) {
+                        alert('Session expired or unauthorized. Please login again.');
+                        localStorage.removeItem('token');
+                        window.location.href = 'login.html';
+                    }
                 }
             } catch (error) {
                 console.error('Error loading appointments:', error);
+                document.getElementById('appointments-list').innerHTML = `
+                    <tr><td colspan="6" style="text-align: center; color: red;">
+                        Connection Error: ${error.message}
+                    </td></tr>`;
             }
         }
 
