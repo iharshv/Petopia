@@ -153,13 +153,44 @@
     </header>
 
     <main class="admin-container">
+        <!-- User Management Section (MOVED TO TOP) -->
+        <div class="dashboard-card" style="margin-bottom: 2rem;">
+            <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2>User Management</h2>
+                    <p>Manage registered users and admins</p>
+                </div>
+                <button onclick="openUserModal()" class="btn btn-primary"><i class="fas fa-plus"></i> Add User</button>
+            </div>
+
+            <div class="admin-table-container">
+                <table id="users-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Phone</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-list">
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Loading users... (System v5.0 Check)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Appointment Management Section -->
         <div class="dashboard-card">
             <div class="profile-header">
                 <h2>Appointment Management</h2>
                 <p>Approve or manage upcoming pet care requests</p>
                 <span
                     style="background: var(--primary-color); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">System
-                    v4.0</span>
+                    v5.0</span>
             </div>
 
             <div id="stats-bar">
@@ -191,38 +222,7 @@
                     </thead>
                     <tbody id="appointments-list">
                         <tr>
-                            <td colspan="6" style="text-align: center;">Loading appointments... (System v3.1 Check)</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        </div>
-
-        <!-- User Management Section -->
-        <div class="dashboard-card" style="margin-top: 2rem;">
-            <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h2>User Management</h2>
-                    <p>Manage registered users and admins</p>
-                </div>
-                <button onclick="openUserModal()" class="btn btn-primary"><i class="fas fa-plus"></i> Add User</button>
-            </div>
-
-            <div class="admin-table-container">
-                <table id="users-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Phone</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-list">
-                        <tr>
-                            <td colspan="5" style="text-align: center;">Loading users...</td>
+                            <td colspan="6" style="text-align: center;">Loading appointments...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -283,6 +283,10 @@
                 window.location.href = 'index.html';
                 return;
             }
+
+            // aggressive flush
+            console.log('Admin Panel v5.0 Loaded');
+            // alert('Admin Panel v5.0 Loaded'); // Optional: uncomment if user is really stuck
 
             loadAppointments();
             loadUsers();
@@ -407,9 +411,17 @@
                     renderUsers(users);
                 } else {
                     console.error('Failed to load users');
+                    document.getElementById('users-list').innerHTML = `
+                        <tr><td colspan="5" style="text-align: center; color: red;">
+                            Error: ${response.status} ${response.statusText}
+                        </td></tr>`;
                 }
             } catch (error) {
                 console.error('Error loading users:', error);
+                document.getElementById('users-list').innerHTML = `
+                        <tr><td colspan="5" style="text-align: center; color: red;">
+                            Connection Error: ${error.message}
+                        </td></tr>`;
             }
         }
 
