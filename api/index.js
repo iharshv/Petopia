@@ -3,6 +3,10 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
+// Import modular models
+const User = require('./models/User');
+const Project = require('./models/Project');
+
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || 'petopia-secret-key';
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -11,57 +15,20 @@ const MONGODB_URI = process.env.MONGODB_URI;
 app.use(cors());
 app.use(express.json());
 
-// Debug Middleware
+// Debug Log
 app.use((req, res, next) => {
     console.log(`[Request] ${req.method} ${req.url}`);
     next();
 });
 
-// Database Connection (Mongoose style like Crossfade)
+// Database Connection
 if (!MONGODB_URI) {
     console.error("MONGODB_URI is not defined!");
 } else {
     mongoose.connect(MONGODB_URI)
-        .then(() => console.log("MongoDB Connected (Petopia)"))
+        .then(() => console.log("MongoDB Connected (Modular)"))
         .catch(err => console.error("MongoDB Connection Error:", err));
 }
-
-// Models (Matching Crossfade User.js)
-const userSchema = new mongoose.Schema({
-    name: String,
-    email: { type: String, lowercase: true, trim: true },
-    password: String, // Saved as plain text like Crossfade
-    role: { type: String, default: 'client' },
-    gender: String,
-    dob: String,
-    phone: String,
-    __v: { type: Number, default: 0 }
-}, { timestamps: true });
-
-const User = mongoose.model('User', userSchema);
-
-// Project Model (Matching Crossfade Project.js)
-const projectSchema = new mongoose.Schema({
-    title: String,
-    description: String,
-    petName: String,
-    petType: String,
-    service: String,
-    date: String,
-    time: String,
-    ownerName: String,
-    phone: String,
-    email: String,
-    notes: String,
-    status: {
-        type: String,
-        enum: ['pending', 'approved', 'rejected', 'Completed'],
-        default: 'pending'
-    },
-    createdAt: { type: Date, default: Date.now }
-});
-
-const Project = mongoose.model('Project', projectSchema);
 
 // Helper: Auth Middleware
 const authenticateToken = (req, res, next) => {
@@ -79,17 +46,19 @@ const authenticateToken = (req, res, next) => {
     }
 };
 
-// Routes
+// --- ROUTES ---
 
 // Register
 app.post('/api/register', async (req, res) => {
     try {
-        const { name, email, phone, dob, gender, password } = req.body;
+        const { name, email: rawEmail, phone, dob, gender, password } = req.body;
+        const email = rawEmail ? rawEmail.toLowerCase() : null;
+
         if (!name || !email || !password) {
             return res.status(400).json({ error: 'Name, email, and password are required' });
         }
 
-        const existingUser = await User.findOne({ email: email.toLowerCase() });
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ error: 'Email already registered' });
         }
@@ -108,7 +77,7 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email: email.toLowerCase(), password }); // Plain text check like Crossfade
+        const user = await User.findOne({ email: email.toLowerCase(), password });
 
         if (!user) {
             return res.status(401).json({ error: 'Invalid email or password' });
@@ -195,17 +164,17 @@ app.put('/api/projects/:id/status', authenticateToken, async (req, res) => {
     }
 });
 
-// Ping
+// System Routes
 app.get('/api/ping', (req, res) => {
-    res.json({ status: 'ok', message: 'Petopia API is alive! (express-centralized-v2)', time: new Date().toISOString() });
+    res.json({ status: 'ok', message: 'Petopia Modular API is alive!', time: new Date().toISOString() });
 });
 
 app.get('/api/test-deployment', (req, res) => {
-    res.json({ success: true, message: 'New Express Deployment v2 is LIVE!' });
+    res.json({ success: true, message: 'Modular Rebuild is LIVE!' });
 });
 
 app.get('/api', (req, res) => {
-    res.json({ message: 'Petopia Express API Root', version: '2.0.0' });
+    res.json({ message: 'Petopia Modular API Root', version: '3.0.0' });
 });
 
 module.exports = app;
