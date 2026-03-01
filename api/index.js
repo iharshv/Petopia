@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 // Import modular models
 const User = require('./models/User');
 const Project = require('./models/Project');
+const Product = require('./models/Product');
 
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || 'petopia-secret-key';
@@ -229,6 +230,53 @@ app.put('/api/projects/:id/status', authenticateToken, async (req, res) => {
     }
 });
 
+// --- PRODUCT MANAGEMENT ---
+
+// Get All Products (Public)
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await Product.find({ active: true }).sort({ createdAt: -1 });
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Create Product (Admin)
+app.post('/api/products', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+        const newProduct = new Product(req.body);
+        await newProduct.save();
+        res.status(201).json({ success: true, message: 'Product created!', product: newProduct });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Update Product (Admin)
+app.put('/api/products/:id', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+        const product = await Product.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+        if (!product) return res.status(404).json({ error: 'Product not found' });
+        res.json({ success: true, message: 'Product updated!', product });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Delete Product (Admin - Soft Delete or Hard Delete)
+app.delete('/api/products/:id', authenticateToken, async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+        await Product.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: 'Product deleted!' });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // System Routes
 app.get('/api/ping', (req, res) => {
     res.json({ status: 'ok', message: 'Petopia Modular API is alive!', time: new Date().toISOString() });
@@ -243,3 +291,12 @@ app.get('/api', (req, res) => {
 });
 
 module.exports = app;
+
+// Local server for development
+if (require.main === module) {
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => {
+        console.log(`\n\x1b[32m[Petopia API] Server running locally at http://localhost:${PORT}\x1b[0m`);
+        console.log(`\x1b[36m[Petopia API] Mode: ${process.env.NODE_ENV || 'development'}\x1b[0m\n`);
+    });
+}

@@ -1,6 +1,6 @@
-const API_BASE_URL = (window.location.hostname.includes('vercel.app'))
-    ? ''
-    : 'https://petopiatails.vercel.app';
+const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:3000'
+    : (window.location.hostname.includes('vercel.app') ? '' : 'https://petopiatails.vercel.app');
 
 if (typeof window !== 'undefined') {
     window.API_BASE_URL = API_BASE_URL;

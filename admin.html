@@ -195,6 +195,38 @@
             </div>
         </div>
 
+        <!-- Product Management Section -->
+        <div class="dashboard-card" style="margin-bottom: 2rem;">
+            <div class="profile-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2>Product Management</h2>
+                    <p>Add, edit or remove products from the shop</p>
+                </div>
+                <button onclick="openProductModal()" class="btn btn-primary"><i class="fas fa-plus"></i> Add
+                    Product</button>
+            </div>
+
+            <div class="admin-table-container">
+                <table id="products-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price (MRP)</th>
+                            <th>Weight</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-products-list">
+                        <tr>
+                            <td colspan="6" style="text-align: center;">Loading products...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Appointment Management Section -->
         <div class="dashboard-card">
             <div class="profile-header">
@@ -284,6 +316,81 @@
         </div>
     </div>
 
+    <!-- Product Modal -->
+    <div id="productModal" class="modal"
+        style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+        <div class="modal-content"
+            style="background-color: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 600px; border-radius: 10px;">
+            <span class="close" onclick="closeProductModal()"
+                style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            <h2 id="productModalTitle">Add Product</h2>
+            <form id="productForm" style="margin-top: 1rem;">
+                <input type="hidden" id="productId">
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 2;">
+                        <label>Product Name</label>
+                        <input type="text" id="prodName" required
+                            style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Weight/Size</label>
+                        <input type="text" id="prodWeight" placeholder="e.g. 1kg, 500ml"
+                            style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label>Description</label>
+                    <textarea id="prodDesc" rows="2"
+                        style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; font-family: inherit;"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label>MRP (₹)</label>
+                        <input type="number" id="prodMrp" required oninput="calculateDiscount()"
+                            style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Selling Price (₹)</label>
+                        <input type="number" id="prodPrice" required oninput="calculateDiscount()"
+                            style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Discount</label>
+                        <div id="prodDiscountLabel"
+                            style="padding: 0.5rem; margin-top: 0.5rem; background: #f0f4f8; border-radius: 5px; text-align: center; font-weight: bold; color: var(--primary);">
+                            0% OFF</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label>Image URL</label>
+                    <input type="url" id="prodImage" placeholder="https://..."
+                        style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label>Categories (Check all that apply)</label>
+                    <div
+                        style="display: flex; gap: 1.5rem; margin-top: 0.5rem; background: #f9f9f9; padding: 0.8rem; border-radius: 8px;">
+                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input
+                                type="checkbox" name="prodCat" value="dog"> Dog</label>
+                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input
+                                type="checkbox" name="prodCat" value="cat"> Cat</label>
+                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input
+                                type="checkbox" name="prodCat" value="food"> Food</label>
+                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input
+                                type="checkbox" name="prodCat" value="accessories"> Accessories</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Product</button>
+            </form>
+        </div>
+    </div>
+
     <script src="api-config.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
@@ -302,6 +409,7 @@
 
             loadAppointments();
             loadUsers();
+            loadAdminProducts();
         });
 
         // --- APPOINTMENTS LOGIC ---
@@ -321,11 +429,11 @@
                     renderTable(bookings);
                 } else {
                     const errorText = await response.text();
-                    console.error('Failed to load:', response.status, errorText);
+                    console.error('Failed to load appointments:', response.status, errorText);
                     document.getElementById('appointments-list').innerHTML = `
-                        <tr><td colspan="6" style="text-align: center; color: red;">
-                            Error loading data: ${response.status} ${response.statusText}
-                        </td></tr>`;
+                    <tr><td colspan="6" style="text-align: center; color: red;">
+                        Error loading appointments: ${response.status}
+                    </td></tr>`;
 
                     if (response.status === 401 || response.status === 403) {
                         alert('Session expired or unauthorized. Please login again.');
@@ -336,9 +444,9 @@
             } catch (error) {
                 console.error('Error loading appointments:', error);
                 document.getElementById('appointments-list').innerHTML = `
-                    <tr><td colspan="6" style="text-align: center; color: red;">
-                        Connection Error: ${error.message}
-                    </td></tr>`;
+                <tr><td colspan="6" style="text-align: center; color: red;">
+                    Connection Error: ${error.message}
+                </td></tr>`;
             }
         }
 
@@ -424,16 +532,16 @@
                 } else {
                     console.error('Failed to load users');
                     document.getElementById('users-list').innerHTML = `
-                        <tr><td colspan="5" style="text-align: center; color: red;">
-                            Error: ${response.status} ${response.statusText}
-                        </td></tr>`;
+                    <tr><td colspan="5" style="text-align: center; color: #666;">
+                        Unable to load users (Status: ${response.status})
+                    </td></tr>`;
                 }
             } catch (error) {
                 console.error('Error loading users:', error);
                 document.getElementById('users-list').innerHTML = `
-                        <tr><td colspan="5" style="text-align: center; color: red;">
-                            Connection Error: ${error.message}
-                        </td></tr>`;
+                    <tr><td colspan="5" style="text-align: center; color: red;">
+                        Connection Error. Ensure server is running.
+                    </td></tr>`;
             }
         }
 
@@ -499,7 +607,163 @@
             }
         }
 
-        // Handle User Form Submit
+        // --- PRODUCT MANAGEMENT LOGIC ---
+
+        function calculateDiscount() {
+            const mrp = parseFloat(document.getElementById('prodMrp').value) || 0;
+            const price = parseFloat(document.getElementById('prodPrice').value) || 0;
+            const label = document.getElementById('prodDiscountLabel');
+
+            if (mrp > 0 && price > 0) {
+                const discount = Math.round(((mrp - price) / mrp) * 100);
+                label.textContent = `${discount}% OFF`;
+                label.style.color = discount > 0 ? 'var(--primary)' : '#666';
+            } else {
+                label.textContent = '0% OFF';
+            }
+        }
+
+        async function loadAdminProducts() {
+            try {
+                const response = await fetch((window.API_BASE_URL || '') + '/api/products');
+                if (response.ok) {
+                    const products = await response.json();
+                    renderAdminProducts(products);
+                } else {
+                    console.error('Failed to load products:', response.status);
+                    document.getElementById('admin-products-list').innerHTML = `
+                    <tr><td colspan="6" style="text-align: center; color: #666;">
+                        Failed to load products (Status: ${response.status})
+                    </td></tr>`;
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('admin-products-list').innerHTML = `
+                <tr><td colspan="6" style="text-align: center; color: red;">
+                    Connection error. Is the local API running?
+                </td></tr>`;
+            }
+        }
+
+        function renderAdminProducts(products) {
+            const list = document.getElementById('admin-products-list');
+            if (products.length === 0) {
+                list.innerHTML = '<tr><td colspan="6" style="text-align: center;">No products found. Add your first product!</td></tr>';
+                return;
+            }
+
+            list.innerHTML = products.map(p => `
+                <tr>
+                    <td><img src="${p.image || 'https://via.placeholder.com/50'}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;"></td>
+                    <td><strong>${p.name}</strong></td>
+                    <td><small>${(p.category || []).join(', ')}</small></td>
+                    <td>₹${p.price} <br><del style="color: #888; font-size: 0.8rem;">₹${p.mrp}</del></td>
+                    <td>${p.weight || '-'}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button onclick='editProduct(${JSON.stringify(p).replace(/'/g, "&apos;")})' class="btn btn-sm" style="background: #ffc107; color: black;">Edit</button>
+                            <button onclick="deleteProduct('${p._id}')" class="btn btn-sm btn-reject">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openProductModal() {
+            document.getElementById('productModal').style.display = 'block';
+            document.getElementById('productModalTitle').textContent = 'Add Product';
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('prodDiscountLabel').textContent = '0% OFF';
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        function editProduct(p) {
+            document.getElementById('productModal').style.display = 'block';
+            document.getElementById('productModalTitle').textContent = 'Edit Product';
+            document.getElementById('productId').value = p._id;
+            document.getElementById('prodName').value = p.name;
+            document.getElementById('prodWeight').value = p.weight || '';
+            document.getElementById('prodDesc').value = p.description || '';
+            document.getElementById('prodMrp').value = p.mrp;
+            document.getElementById('prodPrice').value = p.price;
+            document.getElementById('prodImage').value = p.image || '';
+
+            // Check categories
+            const checkboxes = document.querySelectorAll('input[name="prodCat"]');
+            checkboxes.forEach(cb => {
+                cb.checked = (p.category || []).includes(cb.value);
+            });
+
+            calculateDiscount();
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm('Are you sure you want to delete this product?')) return;
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch((window.API_BASE_URL || '') + `/api/products/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    loadAdminProducts();
+                } else {
+                    alert('Failed to delete product');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+            }
+        }
+
+        document.getElementById('productForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const id = document.getElementById('productId').value;
+            const token = localStorage.getItem('token');
+
+            const categories = [];
+            document.querySelectorAll('input[name="prodCat"]:checked').forEach(cb => categories.push(cb.value));
+
+            const body = {
+                name: document.getElementById('prodName').value,
+                weight: document.getElementById('prodWeight').value,
+                description: document.getElementById('prodDesc').value,
+                mrp: parseFloat(document.getElementById('prodMrp').value),
+                price: parseFloat(document.getElementById('prodPrice').value),
+                image: document.getElementById('prodImage').value,
+                category: categories
+            };
+
+            const method = id ? 'PUT' : 'POST';
+            const url = (window.API_BASE_URL || '') + (id ? `/api/products/${id}` : '/api/products');
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                if (response.ok) {
+                    closeProductModal();
+                    loadAdminProducts();
+                    alert(id ? 'Product updated!' : 'Product added!');
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Failed to save product');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+            }
+        });
+
+        // User Form logic (keep existing)
         document.getElementById('userForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             const id = document.getElementById('userId').value;
