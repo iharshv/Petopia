@@ -146,6 +146,31 @@
                         <input type="time" id="time" required>
                     </div>
                 </div>
+                <script>
+                    const dateInput = document.getElementById("date");
+                    const timeInput = document.getElementById("time");
+
+                    const now = new Date();
+
+                    // Format date YYYY-MM-DD
+                    const today = now.toISOString().split("T")[0];
+                    dateInput.setAttribute("min", today);
+
+                    // When date changes
+                    dateInput.addEventListener("change", function () {
+                        const selectedDate = this.value;
+
+                        if (selectedDate === today) {
+                            // If today selected, restrict past time
+                            const hours = String(now.getHours()).padStart(2, '0');
+                            const minutes = String(now.getMinutes()).padStart(2, '0');
+                            timeInput.min = `${hours}:${minutes}`;
+                        } else {
+                            // Future date → allow any time
+                            timeInput.min = "00:00";
+                        }
+                    });
+                </script>
                 <div class="form-group">
                     <label for="phone">Contact Number</label>
                     <input type="tel" id="phone" placeholder="+91 99999 99999" required>
