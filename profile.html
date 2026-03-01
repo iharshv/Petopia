@@ -296,17 +296,57 @@
                     roleEl.className = `status-pill status-${user.role === 'admin' ? 'approved' : 'pending'}`;
 
                     document.getElementById('display-email').textContent = user.email;
-                    document.getElementById('info-email').innerHTML = `<input type="text" value="${user.email}" readonly style="width: 100%; border: none; background: transparent; font: inherit; color: #888; cursor: not-allowed;">`;
-                    document.getElementById('info-name').innerHTML = `<input type="text" id="edit-name" value="${user.name}" style="width: 100%; border: none; background: transparent; font: inherit;">`;
-                    document.getElementById('info-phone').innerHTML = `<input type="text" id="edit-phone" value="${user.phone || ''}" placeholder="Enter phone" style="width: 100%; border: none; background: transparent; font: inherit;">`;
-                    document.getElementById('info-dob').innerHTML = `<input type="date" id="edit-dob" value="${user.dob || ''}" style="width: 100%; border: none; background: transparent; font: inherit;">`;
-                    document.getElementById('info-gender').innerHTML = `
-                        <select id="edit-gender" style="width: 100%; border: none; background: transparent; font: inherit;">
-                            <option value="">Select</option>
-                            <option value="male" ${user.gender === 'male' ? 'selected' : ''}>Male</option>
-                            <option value="female" ${user.gender === 'female' ? 'selected' : ''}>Female</option>
-                            <option value="other" ${user.gender === 'other' ? 'selected' : ''}>Other</option>
-                        </select>`;
+                    // Refactored to prevent XSS: Use safe DOM creation instead of innerHTML
+                    const emailContainer = document.getElementById('info-email');
+                    emailContainer.innerHTML = '';
+                    const emailInput = document.createElement('input');
+                    emailInput.type = 'text';
+                    emailInput.value = user.email || '';
+                    emailInput.readOnly = true;
+                    emailInput.style.cssText = "width: 100%; border: none; background: transparent; font: inherit; color: #888; cursor: not-allowed;";
+                    emailContainer.appendChild(emailInput);
+
+                    const nameContainer = document.getElementById('info-name');
+                    nameContainer.innerHTML = '';
+                    const nameInput = document.createElement('input');
+                    nameInput.type = 'text';
+                    nameInput.id = 'edit-name';
+                    nameInput.value = user.name || '';
+                    nameInput.style.cssText = "width: 100%; border: none; background: transparent; font: inherit;";
+                    nameContainer.appendChild(nameInput);
+
+                    const phoneContainer = document.getElementById('info-phone');
+                    phoneContainer.innerHTML = '';
+                    const phoneInput = document.createElement('input');
+                    phoneInput.type = 'text';
+                    phoneInput.id = 'edit-phone';
+                    phoneInput.value = user.phone || '';
+                    phoneInput.placeholder = "Enter phone";
+                    phoneInput.style.cssText = "width: 100%; border: none; background: transparent; font: inherit;";
+                    phoneContainer.appendChild(phoneInput);
+
+                    const dobContainer = document.getElementById('info-dob');
+                    dobContainer.innerHTML = '';
+                    const dobInput = document.createElement('input');
+                    dobInput.type = 'date';
+                    dobInput.id = 'edit-dob';
+                    dobInput.value = user.dob || '';
+                    dobInput.style.cssText = "width: 100%; border: none; background: transparent; font: inherit;";
+                    dobContainer.appendChild(dobInput);
+
+                    const genderContainer = document.getElementById('info-gender');
+                    genderContainer.innerHTML = '';
+                    const genderSelect = document.createElement('select');
+                    genderSelect.id = 'edit-gender';
+                    genderSelect.style.cssText = "width: 100%; border: none; background: transparent; font: inherit;";
+                    ['', 'male', 'female', 'other'].forEach(optVal => {
+                        const option = document.createElement('option');
+                        option.value = optVal;
+                        option.textContent = optVal === '' ? 'Select' : optVal.charAt(0).toUpperCase() + optVal.slice(1);
+                        if (user.gender === optVal) option.selected = true;
+                        genderSelect.appendChild(option);
+                    });
+                    genderContainer.appendChild(genderSelect);
 
                     document.getElementById('avatar-initials').textContent = (user.name || 'P').charAt(0).toUpperCase();
 
@@ -416,16 +456,33 @@
 
                     if (uniquePets.length > 0) {
                         petsSection.style.display = 'block';
-                        petsList.innerHTML = uniquePets.map(pet => `
-                            <div class="pet-chip" style="background: #f0f4f8; padding: 0.5rem 1rem; border-radius: 20px; white-space: nowrap; border: 1px solid #d1d9e6;">
-                                <i class="fas fa-${pet.type.toLowerCase().includes('dog') ? 'dog' : 'cat'}" style="color: var(--primary); margin-right: 0.5rem;"></i>
-                                <span style="font-weight: 600;">${pet.name}</span>
-                                <span style="font-size: 0.75rem; color: #666; margin-left: 0.3rem;">(${pet.breed || pet.type})</span>
-                            </div>
-                        `).join('');
+                        petsList.innerHTML = '';
+                        uniquePets.forEach(pet => {
+                            const chip = document.createElement('div');
+                            chip.className = 'pet-chip';
+                            chip.style.cssText = "background: #f0f4f8; padding: 0.5rem 1rem; border-radius: 20px; white-space: nowrap; border: 1px solid #d1d9e6;";
+
+                            const icon = document.createElement('i');
+                            icon.className = `fas fa-${pet.type.toLowerCase().includes('dog') ? 'dog' : 'cat'}`;
+                            icon.style.cssText = "color: var(--primary); margin-right: 0.5rem;";
+                            chip.appendChild(icon);
+
+                            const nameSpan = document.createElement('span');
+                            nameSpan.style.fontWeight = '600';
+                            nameSpan.textContent = pet.name;
+                            chip.appendChild(nameSpan);
+
+                            const breedSpan = document.createElement('span');
+                            breedSpan.style.cssText = "font-size: 0.75rem; color: #666; margin-left: 0.3rem;";
+                            breedSpan.textContent = `(${pet.breed || pet.type})`;
+                            chip.appendChild(breedSpan);
+
+                            petsList.appendChild(chip);
+                        });
                     }
 
                     const list = document.getElementById('history-list');
+                    list.innerHTML = '';
                     if (data.length === 0) {
                         list.innerHTML = `
                             <p style="text-align: center; color: #888; padding: 2rem;">
@@ -434,16 +491,50 @@
                             </p>`;
                         return;
                     }
-                    list.innerHTML = data.map(item => `
-                        <div class="history-item" style="background: white; border-radius: 12px; transition: transform 0.2s;">
-                            <div class="history-details">
-                                <h4 style="color: var(--secondary-color);">${item.service}</h4>
-                                <p style="font-size: 0.85rem; color: #555;"><i class="far fa-calendar-alt"></i> ${item.date} at ${item.time}</p>
-                                <p style="font-size: 0.8rem;"><i class="fas fa-paw"></i> ${item.petName} <span style="color: #888;">(${item.petType})</span></p>
-                            </div>
-                            <span class="status-pill status-${item.status}">${item.status}</span>
-                        </div>
-                    `).sort((a, b) => new Date(b.date) - new Date(a.date)).join('');
+
+                    data.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'history-item';
+                        itemDiv.style.cssText = "background: white; border-radius: 12px; transition: transform 0.2s;";
+
+                        const detailsDiv = document.createElement('div');
+                        detailsDiv.className = 'history-details';
+
+                        const h4 = document.createElement('h4');
+                        h4.style.color = 'var(--secondary-color)';
+                        h4.textContent = item.service;
+                        detailsDiv.appendChild(h4);
+
+                        const pDate = document.createElement('p');
+                        pDate.style.cssText = "font-size: 0.85rem; color: #555;";
+                        // Safe icon + text construction
+                        const dateIcon = document.createElement('i');
+                        dateIcon.className = 'far fa-calendar-alt';
+                        pDate.appendChild(dateIcon);
+                        pDate.appendChild(document.createTextNode(` ${item.date} at ${item.time}`));
+                        detailsDiv.appendChild(pDate);
+
+                        const pPet = document.createElement('p');
+                        pPet.style.cssText = "font-size: 0.8rem;";
+                        const pawIcon = document.createElement('i');
+                        pawIcon.className = 'fas fa-paw';
+                        pPet.appendChild(pawIcon);
+                        pPet.appendChild(document.createTextNode(` ${item.petName} `));
+                        const typeSpan = document.createElement('span');
+                        typeSpan.style.color = '#888';
+                        typeSpan.textContent = `(${item.petType})`;
+                        pPet.appendChild(typeSpan);
+                        detailsDiv.appendChild(pPet);
+
+                        itemDiv.appendChild(detailsDiv);
+
+                        const statusSpan = document.createElement('span');
+                        statusSpan.className = `status-pill status-${item.status}`;
+                        statusSpan.textContent = item.status;
+                        itemDiv.appendChild(statusSpan);
+
+                        list.appendChild(itemDiv);
+                    });
                 }
             } catch (error) {
                 console.error('History error:', error);
