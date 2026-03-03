@@ -232,6 +232,16 @@ app.put('/api/projects/:id/status', authenticateToken, async (req, res) => {
 
 // --- PRODUCT MANAGEMENT ---
 
+// Get All Categories (Unique tags in use)
+app.get('/api/categories', async (req, res) => {
+    try {
+        const categories = await Product.distinct('category', { active: true });
+        res.json(categories.sort());
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // Get All Products (Public)
 app.get('/api/products', async (req, res) => {
     try {

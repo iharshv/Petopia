@@ -233,12 +233,11 @@
         <div class="container">
 
             <!-- Filters -->
-            <div class="shop-controls">
-                <button class="filter-btn active" onclick="filterProducts('all')">All Products</button>
-                <button class="filter-btn" onclick="filterProducts('dog')">Dog Essentials</button>
-                <button class="filter-btn" onclick="filterProducts('cat')">Cat Essentials</button>
-                <button class="filter-btn" onclick="filterProducts('food')">Food & Treats</button>
-                <button class="filter-btn" onclick="filterProducts('accessories')">Accessories</button>
+            <div class="shop-controls" id="filter-container">
+                <!-- Buttons will be injected here by JS -->
+                <button class="filter-btn" onclick="filterProducts('all')" id="btn-all">All Products</button>
+                <div id="dynamic-filters" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                </div>
                 <button class="filter-btn" style="position: relative; opacity: 0.7; cursor: not-allowed;" disabled>
                     <i class="fas fa-tshirt" style="margin-right: 5px;"></i> Clothes
                     <span

@@ -9,7 +9,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     await loadProducts();
+    await loadCategories();
+    filterProducts('all');
 });
+
+async function loadCategories() {
+    try {
+        const baseUrl = window.API_BASE_URL || '';
+        const response = await fetch(baseUrl + '/api/categories');
+        if (response.ok) {
+            const categories = await response.json();
+            renderFilters(categories);
+        }
+    } catch (error) {
+        console.error('Error loading categories:', error);
+    }
+}
+
+function renderFilters(categories) {
+    const container = document.getElementById('dynamic-filters');
+    if (!container) return;
+
+    container.innerHTML = categories.map(cat => `
+        <button class="filter-btn" onclick="filterProducts('${cat}')">
+            ${cat.charAt(0).toUpperCase() + cat.slice(1)}
+        </button>
+    `).join('');
+}
 
 async function loadProducts() {
     try {
@@ -78,9 +104,16 @@ function filterProducts(category) {
     const buttons = document.querySelectorAll('.filter-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
 
-    // Find correctly clicked button from event
-    if (event && event.target) {
+    // Find correctly clicked button from event or item click
+    if (typeof event !== 'undefined' && event && event.target && event.target.classList.contains('filter-btn')) {
         event.target.classList.add('active');
+    } else if (category === 'all') {
+        const btnAll = document.getElementById('btn-all');
+        if (btnAll) btnAll.classList.add('active');
+    } else {
+        // Highlight based on text content (for programmatic calls)
+        const targetBtn = Array.from(buttons).find(b => b.textContent.trim().toLowerCase() === category.toLowerCase());
+        if (targetBtn) targetBtn.classList.add('active');
     }
 
     if (category === 'all') {

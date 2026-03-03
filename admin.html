@@ -372,18 +372,13 @@
                 </div>
 
                 <div style="margin-bottom: 1rem;">
-                    <label>Categories (Check all that apply)</label>
-                    <div
-                        style="display: flex; gap: 1.5rem; margin-top: 0.5rem; background: #f9f9f9; padding: 0.8rem; border-radius: 8px;">
-                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input
-                                type="checkbox" name="prodCat" value="dog"> Dog</label>
-                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input
-                                type="checkbox" name="prodCat" value="cat"> Cat</label>
-                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input
-                                type="checkbox" name="prodCat" value="food"> Food</label>
-                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input
-                                type="checkbox" name="prodCat" value="accessories"> Accessories</label>
+                    <label>Categories (Check existing or add new)</label>
+                    <div id="admin-category-checks"
+                        style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; background: #f9f9f9; padding: 0.8rem; border-radius: 8px;">
+                        <!-- Checkboxes will be injected here -->
                     </div>
+                    <input type="text" id="prodNewTags" placeholder="Add new tags (comma separated, e.g. toys, leash)"
+                        style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; border: 1px dashed #ccc;">
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Save Product</button>
@@ -410,6 +405,7 @@
             loadAppointments();
             loadUsers();
             loadAdminProducts();
+            loadAdminCategories();
         });
 
         // --- APPOINTMENTS LOGIC ---
@@ -645,6 +641,28 @@
             }
         }
 
+        async function loadAdminCategories() {
+            try {
+                const response = await fetch((window.API_BASE_URL || '') + '/api/categories');
+                if (response.ok) {
+                    const categories = await response.json();
+                    renderCategoryChecks(categories);
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        function renderCategoryChecks(categories) {
+            const container = document.getElementById('admin-category-checks');
+            if (!container) return;
+            container.innerHTML = categories.map(cat => `
+                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                    <input type="checkbox" name="prodCat" value="${cat}"> ${cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </label>
+            `).join('');
+        }
+
         function renderAdminProducts(products) {
             const list = document.getElementById('admin-products-list');
             if (products.length === 0) {
@@ -669,19 +687,20 @@
             `).join('');
         }
 
-        function openProductModal() {
+        async function openProductModal() {
             document.getElementById('productModal').style.display = 'block';
             document.getElementById('productModalTitle').textContent = 'Add Product';
             document.getElementById('productForm').reset();
             document.getElementById('productId').value = '';
             document.getElementById('prodDiscountLabel').textContent = '0% OFF';
+            await loadAdminCategories(); // Ensure fresh list
         }
 
         function closeProductModal() {
             document.getElementById('productModal').style.display = 'none';
         }
 
-        function editProduct(p) {
+        async function editProduct(p) {
             document.getElementById('productModal').style.display = 'block';
             document.getElementById('productModalTitle').textContent = 'Edit Product';
             document.getElementById('productId').value = p._id;
@@ -691,6 +710,9 @@
             document.getElementById('prodMrp').value = p.mrp;
             document.getElementById('prodPrice').value = p.price;
             document.getElementById('prodImage').value = p.image || '';
+            document.getElementById('prodNewTags').value = ''; // Clean new tags field
+
+            await loadAdminCategories(); // Wait for checkboxes to render
 
             // Check categories
             const checkboxes = document.querySelectorAll('input[name="prodCat"]');
@@ -727,6 +749,15 @@
             const categories = [];
             document.querySelectorAll('input[name="prodCat"]:checked').forEach(cb => categories.push(cb.value));
 
+            // Process New Tags
+            const newTagsStr = document.getElementById('prodNewTags').value;
+            if (newTagsStr) {
+                const newTags = newTagsStr.split(',').map(t => t.trim().toLowerCase()).filter(t => t !== '');
+                newTags.forEach(t => {
+                    if (!categories.includes(t)) categories.push(t);
+                });
+            }
+
             const body = {
                 name: document.getElementById('prodName').value,
                 weight: document.getElementById('prodWeight').value,
@@ -752,7 +783,8 @@
 
                 if (response.ok) {
                     closeProductModal();
-                    loadAdminProducts();
+                    await loadAdminProducts();
+                    await loadAdminCategories(); // Refresh tags in case new ones were added
                     alert(id ? 'Product updated!' : 'Product added!');
                 } else {
                     const data = await response.json();
