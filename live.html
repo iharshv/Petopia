@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Petopia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 120px auto 40px;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1rem;
+        }
+
+        .profile-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .profile-info {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            padding: 0.8rem;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+
+        .logout-btn {
+            background: #ff4757;
+            margin-top: 1rem;
+        }
+
+        .logout-btn:hover {
+            background: #ff6b81;
+        }
+
+        .history-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: 1px solid #eee;
+        }
+
+        .history-details h4 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .history-details p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <img src="assets/logo-white.png" alt="Petopia Logo">
+                </a>
+
+                <div class="hamburger" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html#why-petopia">Why Petopia</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="index.html#reviews">Reviews</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="booking.html" class="btn btn-primary" style="padding: 5px 15px;">Book Appointment</a>
+                    </li>
+                </ul>
+
+                <div class="nav-right">
+                    <div class="nav-contact-items">
+                        <a href="tel:+919987801581"><i class="fas fa-phone-alt"
+                                style="margin-right: 5px; color: var(--primary);"></i>+91 99878 01581</a>
+                        <a href="https://maps.app.goo.gl/64Y1J6REaj2DGpYf6" target="_blank"
+                            style="text-decoration: underline; font-size: 0.8rem;">Airoli, Navi Mumbai</a>
+                    </div>
+                    <div class="auth-links" style="color: white; margin-left: 15px;">
+                        <a href="login.html">Login</a> <span style="color: var(--primary);">|</span> <a
+                            href="register.html">Register</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="profile-container">
+            <div id="message"></div>
+
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar" id="avatar-initials">P</div>
+                <h2 id="display-name">Loading...</h2>
+                <p id="display-email">Loading...</p>
+                <div id="display-role" class="status-pill status-approved"
+                    style="display: inline-block; margin-top: 0.5rem;">Client</div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid"
+                style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                <div class="stat-card"
+                    style="background: #f0f4f8; padding: 1rem; border-radius: 15px; text-align: center;">
+                    <i class="fas fa-calendar-check"
+                        style="color: var(--primary); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                    <div style="font-size: 1.2rem; font-weight: bold;" id="stat-appointments">0</div>
+                    <div style="font-size: 0.75rem; color: #666;">Total Appointments</div>
+                </div>
+                <div class="stat-card"
+                    style="background: #f0f4f8; padding: 1rem; border-radius: 15px; text-align: center;">
+                    <i class="fas fa-user-clock"
+                        style="color: var(--primary); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                    <div style="font-size: 1.2rem; font-weight: bold;" id="stat-joined"> - </div>
+                    <div style="font-size: 0.75rem; color: #666;">Member Since</div>
+                </div>
+            </div>
+
+            <!-- Profile Details -->
+            <div class="profile-section">
+                <h3
+                    style="margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 2px solid var(--primary); display: inline-block;">
+                    Personal Information</h3>
+
+                <div class="row" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="profile-form-group" style="flex: 1;">
+                        <label><i class="fas fa-user"></i> Full Name</label>
+                        <div class="profile-info" id="info-name">-</div>
+                    </div>
+                    <div class="profile-form-group" style="flex: 1;">
+                        <label><i class="fas fa-envelope"></i> Email Address</label>
+                        <div class="profile-info" id="info-email">-</div>
+                    </div>
+                </div>
+
+                <div class="row" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="profile-form-group" style="flex: 1;">
+                        <label><i class="fas fa-venus-mars"></i> Gender</label>
+                        <div class="profile-info" id="info-gender">-</div>
+                    </div>
+                    <div class="profile-form-group" style="flex: 1;">
+                        <label><i class="fas fa-birthday-cake"></i> Date of Birth</label>
+                        <div class="profile-info" id="info-dob">-</div>
+                    </div>
+                </div>
+
+                <div class="profile-form-group">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <div class="profile-info" id="info-phone">-</div>
+                </div>
+            </div>
+
+            <!-- Account Settings Placeholder -->
+            <div class="profile-section" style="margin-top: 2rem;">
+                <h3
+                    style="margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 2px solid var(--primary); display: inline-block;">
+                    Account Settings</h3>
+                <div class="profile-info" style="color: #666; font-size: 0.9rem; font-style: italic;">
+                    Security, Notifications, and Privacy settings coming soon.
+                </div>
+            </div>
+
+            <div id="save-btn-container"></div>
+
+            <button onclick="handleLogout()" class="btn btn-primary logout-btn"
+                style="width: 100%; border-radius: 10px;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+
+            <!-- Admin Activation -->
+            <div id="admin-activation"
+                style="margin-top: 2rem; padding: 1rem; background: #fff3cd; border-radius: 15px; border: 1px dashed #ffeeba; display: none; text-align: left;">
+                <p style="font-size: 0.8rem; color: #856404; margin-bottom: 0.5rem; font-weight: bold;">
+                    <i class="fas fa-shield-alt"></i> Developer: Admin Activation
+                </p>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="password" id="admin-secret" placeholder="Enter Secret Key"
+                        style="flex: 1; padding: 0.5rem; border-radius: 8px; border: 1px solid #ddd;">
+                    <button onclick="activateAdmin()" class="btn btn-primary"
+                        style="padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: 8px;">Activate</button>
+                </div>
+                <p id="admin-message" style="font-size: 0.75rem; margin-top: 0.5rem;"></p>
+            </div>
+
+            <!-- My Pets Section -->
+            <div id="pets-section"
+                style="margin-top: 2rem; border-top: 1px solid #eee; padding-top: 2rem; display: none;">
+                <h3
+                    style="margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 2px solid var(--primary); display: inline-block;">
+                    <i class="fas fa-paw"></i> My Pets
+                </h3>
+                <div id="pets-list" style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem;">
+                    <!-- Pets will be populated here -->
+                </div>
+            </div>
+
+            <!-- History Section -->
+            <div class="history-section">
+                <h3><i class="fas fa-history"></i> Appointment History</h3>
+                <div id="history-list">
+                    <p style="text-align: center; color: #888; padding: 2rem;">
+                        <i class="fas fa-clipboard-list"
+                            style="display: block; font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                        No history found.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="api-config.js"></script>
+    <script src="auth-sync.js?v=2.2.0"></script>
+    <script>
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // PetopiaAuth handles the header sync automatically
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const baseUrl = window.API_BASE_URL || '';
+                const apiUrl = baseUrl + '/api/profile';
+                console.log('[Profile] Fetching from:', apiUrl);
+
+                const response = await fetch(apiUrl, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                console.log('[Profile] API:', apiUrl, 'Status:', response.status);
+
+                if (response.ok) {
+                    const user = await response.json();
+
+                    // Update UI fields
+                    document.getElementById('display-name').textContent = user.name || 'Client';
+                    const roleEl = document.getElementById('display-role');
+                    roleEl.textContent = user.role === 'admin' ? 'Administrator' : 'Client';
+                    roleEl.className = `status-pill status-${user.role === 'admin' ? 'approved' : 'pending'}`;
+
+                    document.getElementById('display-email').textContent = user.email;
+                    document.getElementById('info-email').innerHTML = `<input type="text" value="${user.email}" readonly style="width: 100%; border: none; background: transparent; font: inherit; color: #888; cursor: not-allowed;">`;
+                    document.getElementById('info-name').innerHTML = `<input type="text" id="edit-name" value="${user.name}" style="width: 100%; border: none; background: transparent; font: inherit;">`;
+                    document.getElementById('info-phone').innerHTML = `<input type="text" id="edit-phone" value="${user.phone || ''}" placeholder="Enter phone" style="width: 100%; border: none; background: transparent; font: inherit;">`;
+                    document.getElementById('info-dob').innerHTML = `<input type="date" id="edit-dob" value="${user.dob || ''}" style="width: 100%; border: none; background: transparent; font: inherit;">`;
+                    document.getElementById('info-gender').innerHTML = `
+                        <select id="edit-gender" style="width: 100%; border: none; background: transparent; font: inherit;">
+                            <option value="">Select</option>
+                            <option value="male" ${user.gender === 'male' ? 'selected' : ''}>Male</option>
+                            <option value="female" ${user.gender === 'female' ? 'selected' : ''}>Female</option>
+                            <option value="other" ${user.gender === 'other' ? 'selected' : ''}>Other</option>
+                        </select>`;
+
+                    document.getElementById('avatar-initials').textContent = (user.name || 'P').charAt(0).toUpperCase();
+
+                    // Set Member Since
+                    if (user.createdAt) {
+                        const joinedDate = new Date(user.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+                        document.getElementById('stat-joined').textContent = joinedDate;
+                    }
+
+                    // Add Save Button if not already there
+                    const saveBtnContainer = document.getElementById('save-btn-container');
+                    if (!document.getElementById('save-profile-btn')) {
+                        const saveBtn = document.createElement('button');
+                        saveBtn.id = 'save-profile-btn';
+                        saveBtn.className = 'btn btn-primary';
+                        saveBtn.style = 'width: 100%; margin: 1rem 0; background: var(--primary); border-radius: 10px;';
+                        saveBtn.textContent = 'Save Changes';
+                        saveBtn.onclick = saveProfile;
+                        saveBtnContainer.appendChild(saveBtn);
+                    }
+
+                    const currentRole = localStorage.getItem('userRole') || 'client';
+                    const newRole = user.role || 'client';
+
+                    if (newRole !== currentRole) {
+                        localStorage.setItem('userRole', newRole);
+                        if (window.PetopiaAuth) PetopiaAuth.sync();
+                    }
+
+                    if (newRole !== 'admin') {
+                        document.getElementById('admin-activation').style.display = 'block';
+                    }
+
+                    // Load History
+                    await loadHistory();
+
+                } else {
+                    const error = await response.text();
+                    console.error('Profile fetch failed:', response.status, error);
+                    document.getElementById('display-name').textContent = 'Error Loading Profile';
+                    document.getElementById('display-email').textContent = 'Please log out and try again.';
+                }
+            } catch (error) {
+                console.error('Network Error:', error);
+                document.getElementById('display-name').textContent = 'Connection error';
+                document.getElementById('display-email').textContent = 'Please check your connection.';
+            }
+        });
+
+        async function saveProfile() {
+            const token = localStorage.getItem('token');
+            const name = document.getElementById('edit-name').value;
+            const phone = document.getElementById('edit-phone').value;
+            const dob = document.getElementById('edit-dob').value;
+            const gender = document.getElementById('edit-gender').value;
+
+            try {
+                const apiUrl = (window.API_BASE_URL || '') + '/api/profile';
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, phone, dob, gender })
+                });
+
+                if (response.ok) {
+                    alert('Profile updated successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Failed to update profile.');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+            }
+        }
+
+        async function loadHistory() {
+            const token = localStorage.getItem('token');
+            try {
+                const apiUrl = (window.API_BASE_URL || '') + '/api/projects/my/' + encodeURIComponent(localStorage.getItem('userEmail'));
+                const response = await fetch(apiUrl, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Update stats
+                    document.getElementById('stat-appointments').textContent = data.length;
+
+                    // Populate Pets Section
+                    const petsSection = document.getElementById('pets-section');
+                    const petsList = document.getElementById('pets-list');
+                    const uniquePets = [];
+                    const petNames = new Set();
+
+                    data.forEach(booking => {
+                        if (booking.petName && !petNames.has(booking.petName.toLowerCase())) {
+                            petNames.add(booking.petName.toLowerCase());
+                            uniquePets.push({
+                                name: booking.petName,
+                                type: booking.petType,
+                                breed: booking.breed
+                            });
+                        }
+                    });
+
+                    if (uniquePets.length > 0) {
+                        petsSection.style.display = 'block';
+                        petsList.innerHTML = uniquePets.map(pet => `
+                            <div class="pet-chip" style="background: #f0f4f8; padding: 0.5rem 1rem; border-radius: 20px; white-space: nowrap; border: 1px solid #d1d9e6;">
+                                <i class="fas fa-${pet.type.toLowerCase().includes('dog') ? 'dog' : 'cat'}" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                                <span style="font-weight: 600;">${pet.name}</span>
+                                <span style="font-size: 0.75rem; color: #666; margin-left: 0.3rem;">(${pet.breed || pet.type})</span>
+                            </div>
+                        `).join('');
+                    }
+
+                    const list = document.getElementById('history-list');
+                    if (data.length === 0) {
+                        list.innerHTML = `
+                            <p style="text-align: center; color: #888; padding: 2rem;">
+                                <i class="fas fa-clipboard-list" style="display: block; font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                                No appointments found yet.
+                            </p>`;
+                        return;
+                    }
+                    list.innerHTML = data.map(item => `
+                        <div class="history-item" style="background: white; border-radius: 12px; transition: transform 0.2s;">
+                            <div class="history-details">
+                                <h4 style="color: var(--secondary-color);">${item.service}</h4>
+                                <p style="font-size: 0.85rem; color: #555;"><i class="far fa-calendar-alt"></i> ${item.date} at ${item.time}</p>
+                                <p style="font-size: 0.8rem;"><i class="fas fa-paw"></i> ${item.petName} <span style="color: #888;">(${item.petType})</span></p>
+                            </div>
+                            <span class="status-pill status-${item.status}">${item.status}</span>
+                        </div>
+                    `).sort((a, b) => new Date(b.date) - new Date(a.date)).join('');
+                }
+            } catch (error) {
+                console.error('History error:', error);
+            }
+        }
+
+        async function activateAdmin() {
+            const secret = document.getElementById('admin-secret').value;
+            const email = document.getElementById('display-email').textContent;
+            const msg = document.getElementById('admin-message');
+
+            if (!secret) return;
+
+            try {
+                msg.textContent = 'Processing...';
+                const apiUrl = (window.API_BASE_URL || '') + '/api/set-admin-temp';
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, secret })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    msg.style.color = 'green';
+                    msg.textContent = 'Success! User promoted. Please log out and back in.';
+                    localStorage.setItem('userRole', 'admin');
+                    PetopiaAuth.sync();
+                } else {
+                    msg.style.color = 'red';
+                    msg.textContent = data.error || 'Failed to activate.';
+                }
+            } catch (error) {
+                msg.textContent = 'Error connecting to server.';
+            }
+        }
+    </script>
+</body>
+
+</html>
