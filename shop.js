@@ -50,7 +50,11 @@ async function loadProducts() {
         }
     } catch (error) {
         console.error('Error loading products:', error);
-        document.getElementById('productProxy').innerHTML = '<p style="text-align:center; padding: 2rem; color: #666;">Connection error. Please check your internet.</p>';
+        document.getElementById('productProxy').innerHTML = `
+            <div style="text-align:center; padding: 2rem; color: #666;">
+                <p>Connection error. Please check your internet.</p>
+                <small style="color: #999;">Attempted URL: ${baseUrl + '/api/products'}</small>
+            </div>`;
     }
 }
 

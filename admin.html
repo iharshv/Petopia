@@ -441,7 +441,8 @@
                 console.error('Error loading appointments:', error);
                 document.getElementById('appointments-list').innerHTML = `
                 <tr><td colspan="6" style="text-align: center; color: red;">
-                    Connection Error: ${error.message}
+                    Connection Error: ${error.message} <br>
+                    <small>Attempted URL: ${apiUrl}</small>
                 </td></tr>`;
             }
         }
@@ -536,7 +537,7 @@
                 console.error('Error loading users:', error);
                 document.getElementById('users-list').innerHTML = `
                     <tr><td colspan="5" style="text-align: center; color: red;">
-                        Connection Error. Ensure server is running.
+                        Connection error. Attempted URL: ${apiUrl}
                     </td></tr>`;
             }
         }
@@ -636,7 +637,8 @@
                 console.error('Error loading products:', error);
                 document.getElementById('admin-products-list').innerHTML = `
                 <tr><td colspan="6" style="text-align: center; color: red;">
-                    Connection error. Is the local API running?
+                    Connection error. <br>
+                    <small>URL: ${(window.API_BASE_URL || '') + '/api/products'}</small>
                 </td></tr>`;
             }
         }
