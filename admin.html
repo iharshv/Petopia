@@ -451,8 +451,15 @@
             document.getElementById('stat-total').textContent = bookings.length;
             document.getElementById('stat-pending').textContent = bookings.filter(b => b.status === 'pending').length;
 
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('stat-today').textContent = bookings.filter(b => b.date === today).length;
+            // Use IST for "Today" comparison
+            const now = new Date();
+            const istOffset = 5.5 * 60 * 60 * 1000;
+            const istDate = new Date(now.getTime() + istOffset);
+            const todayStr = istDate.toISOString().split('T')[0];
+
+            // Filter Today's appointments: Must match today's date AND NOT be rejected
+            const todayBookings = bookings.filter(b => b.date === todayStr && b.status !== 'rejected');
+            document.getElementById('stat-today').textContent = todayBookings.length;
         }
 
         function renderTable(bookings) {

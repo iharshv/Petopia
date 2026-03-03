@@ -150,26 +150,37 @@
                     const dateInput = document.getElementById("date");
                     const timeInput = document.getElementById("time");
 
-                    const now = new Date();
+                    // Calculate current time in IST
+                    function getISTNow() {
+                        const now = new Date();
+                        const istOffset = 5.5 * 60 * 60 * 1000;
+                        return new Date(now.getTime() + istOffset);
+                    }
 
-                    // Format date YYYY-MM-DD
-                    const today = now.toISOString().split("T")[0];
+                    const istNow = getISTNow();
+                    const today = istNow.toISOString().split("T")[0];
+
+                    // Set min date to today's date in IST
                     dateInput.setAttribute("min", today);
+                    dateInput.value = today; // Default to today
 
-                    // When date changes
-                    dateInput.addEventListener("change", function () {
-                        const selectedDate = this.value;
+                    function restrictTime() {
+                        const selectedDate = dateInput.value;
+                        const currentIST = getISTNow();
+                        const currentToday = currentIST.toISOString().split("T")[0];
 
-                        if (selectedDate === today) {
-                            // If today selected, restrict past time
-                            const hours = String(now.getHours()).padStart(2, '0');
-                            const minutes = String(now.getMinutes()).padStart(2, '0');
+                        if (selectedDate === currentToday) {
+                            const hours = String(currentIST.getUTCHours()).padStart(2, '0');
+                            const minutes = String(currentIST.getUTCMinutes()).padStart(2, '0');
                             timeInput.min = `${hours}:${minutes}`;
                         } else {
-                            // Future date → allow any time
                             timeInput.min = "00:00";
                         }
-                    });
+                    }
+
+                    // Run on load and on date change
+                    restrictTime();
+                    dateInput.addEventListener("change", restrictTime);
                 </script>
                 <div class="form-group">
                     <label for="phone">Contact Number</label>
