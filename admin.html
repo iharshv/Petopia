@@ -644,14 +644,17 @@
         }
 
         async function loadAdminCategories() {
+            const apiUrl = (window.API_BASE_URL || '') + '/api/categories';
             try {
-                const response = await fetch((window.API_BASE_URL || '') + '/api/categories');
+                const response = await fetch(apiUrl);
                 if (response.ok) {
                     const categories = await response.json();
                     renderCategoryChecks(categories);
                 }
             } catch (error) {
                 console.error('Error loading categories:', error);
+                const container = document.getElementById('admin-category-checks');
+                if (container) container.innerHTML = `<small style="color:red">Failed to load categories: ${error.message} (URL: ${apiUrl})</small>`;
             }
         }
 

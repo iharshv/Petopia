@@ -14,15 +14,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function loadCategories() {
+    const baseUrl = window.API_BASE_URL || '';
+    const apiUrl = baseUrl + '/api/categories';
     try {
-        const baseUrl = window.API_BASE_URL || '';
-        const response = await fetch(baseUrl + '/api/categories');
+        const response = await fetch(apiUrl);
         if (response.ok) {
             const categories = await response.json();
             renderFilters(categories);
         }
     } catch (error) {
         console.error('Error loading categories:', error);
+        const container = document.getElementById('dynamic-filters');
+        if (container) container.innerHTML = `<small style="color:#666">Failed to load tags. (URL: ${apiUrl})</small>`;
     }
 }
 
