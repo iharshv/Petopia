@@ -333,11 +333,6 @@
                         <input type="text" id="prodName" required
                             style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
                     </div>
-                    <div style="flex: 1;">
-                        <label>Weight/Size</label>
-                        <input type="text" id="prodWeight" placeholder="e.g. 1kg, 500ml"
-                            style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
-                    </div>
                 </div>
 
                 <div style="margin-bottom: 1rem;">
@@ -346,39 +341,48 @@
                         style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; font-family: inherit;"></textarea>
                 </div>
 
-                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-                    <div style="flex: 1;">
-                        <label>MRP (₹)</label>
-                        <input type="number" id="prodMrp" required oninput="calculateDiscount()"
-                            style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                <div id="variants-container"
+                    style="margin-bottom: 1rem; border: 1px solid #eee; padding: 1rem; border-radius: 8px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label style="font-weight: bold;">Product Variants (Weights/Flavors)</label>
+                        <button type="button" onclick="addVariantRow()" class="btn btn-sm"
+                            style="background: var(--primary); color: white;">
+                            <i class="fas fa-plus"></i> Add Variant
+                        </button>
                     </div>
-                    <div style="flex: 1;">
-                        <label>Selling Price (₹)</label>
-                        <input type="number" id="prodPrice" required oninput="calculateDiscount()"
-                            style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
+                    <div id="variant-rows">
+                        <!-- Variant rows will be injected here -->
                     </div>
-                    <div style="flex: 1;">
-                        <label>Discount</label>
-                        <div id="prodDiscountLabel"
-                            style="padding: 0.5rem; margin-top: 0.5rem; background: #f0f4f8; border-radius: 5px; text-align: center; font-weight: bold; color: var(--primary);">
-                            0% OFF</div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem; background: #fdfdfd; padding: 1rem; border-radius: 10px; border: 1px solid #eee;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 0.5rem;">Product Image</label>
+                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                        <div id="image-preview-container" style="width: 100px; height: 100px; border: 2px dashed #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #fff;">
+                            <img id="prodImagePreview" src="https://via.placeholder.com/100" style="max-width: 100%; max-height: 100%; object-fit: cover; display: none;">
+                            <i id="preview-placeholder" class="fas fa-image" style="font-size: 2rem; color: #ccc;"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <label class="btn btn-sm" style="background: #e9ecef; color: #495057; cursor: pointer; display: inline-block; margin-bottom: 0.5rem;">
+                                <i class="fas fa-upload"></i> Upload from Device
+                                <input type="file" id="prodImageFile" accept="image/*" onchange="previewImage(this)" style="display: none;">
+                            </label>
+                            <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.5rem;">OR enter image URL below:</div>
+                            <input type="url" id="prodImage" placeholder="https://..."
+                                style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
                     </div>
                 </div>
 
                 <div style="margin-bottom: 1rem;">
-                    <label>Image URL</label>
-                    <input type="url" id="prodImage" placeholder="https://..."
-                        style="width: 100%; padding: 0.5rem; margin-top: 0.5rem;">
-                </div>
-
-                <div style="margin-bottom: 1rem;">
-                    <label>Categories (Check existing or add new)</label>
+                    <label style="font-weight: bold;">Categories (Select Multiple)</label>
                     <div id="admin-category-checks"
-                        style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; background: #f9f9f9; padding: 0.8rem; border-radius: 8px;">
+                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem; margin-top: 0.5rem; background: #f9f9f9; padding: 1rem; border-radius: 8px; border: 1px solid #eee;">
                         <!-- Checkboxes will be injected here -->
                     </div>
                     <input type="text" id="prodNewTags" placeholder="Add new tags (comma separated, e.g. toys, leash)"
-                        style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; border: 1px dashed #ccc;">
+                        style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; border: 1px dashed #ccc; border-radius: 5px;">
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Save Product</button>
@@ -613,17 +617,64 @@
 
         // --- PRODUCT MANAGEMENT LOGIC ---
 
-        function calculateDiscount() {
-            const mrp = parseFloat(document.getElementById('prodMrp').value) || 0;
-            const price = parseFloat(document.getElementById('prodPrice').value) || 0;
-            const label = document.getElementById('prodDiscountLabel');
+        function previewImage(input) {
+            const preview = document.getElementById('prodImagePreview');
+            const placeholder = document.getElementById('preview-placeholder');
+            const file = input.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function addVariantRow(v = {}) {
+            const container = document.getElementById('variant-rows');
+            const rowId = Date.now() + Math.random();
+            const row = document.createElement('div');
+            row.className = 'variant-row';
+            row.style = 'display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end; background: #f8f9fa; padding: 0.5rem; border-radius: 5px;';
+            row.innerHTML = `
+                <div style="flex: 1;">
+                    <label style="font-size: 0.8rem;">Weight</label>
+                    <input type="text" class="v-weight" value="${v.weight || ''}" placeholder="1kg" style="width: 100%; padding: 0.3rem;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 0.8rem;">Flavor</label>
+                    <input type="text" class="v-flavor" value="${v.flavor || ''}" placeholder="Fish" style="width: 100%; padding: 0.3rem;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 0.8rem;">MRP</label>
+                    <input type="number" class="v-mrp" value="${v.mrp || ''}" required oninput="calculateVariantDiscount(this)" style="width: 100%; padding: 0.3rem;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 0.8rem;">Price</label>
+                    <input type="number" class="v-price" value="${v.price || ''}" required oninput="calculateVariantDiscount(this)" style="width: 100%; padding: 0.3rem;">
+                </div>
+                <div style="width: 60px; text-align: center;">
+                    <small class="v-discount" style="font-weight: bold; color: var(--primary); display: block;">${v.mrp && v.price ? Math.round(((v.mrp - v.price) / v.mrp) * 100) + '%' : '0%'}</small>
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" class="btn btn-sm btn-reject" style="padding: 2px 5px;"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        function calculateVariantDiscount(input) {
+            const row = input.closest('.variant-row');
+            const mrp = parseFloat(row.querySelector('.v-mrp').value) || 0;
+            const price = parseFloat(row.querySelector('.v-price').value) || 0;
+            const label = row.querySelector('.v-discount');
 
             if (mrp > 0 && price > 0) {
                 const discount = Math.round(((mrp - price) / mrp) * 100);
-                label.textContent = `${discount}% OFF`;
-                label.style.color = discount > 0 ? 'var(--primary)' : '#666';
+                label.textContent = `${discount}%`;
             } else {
-                label.textContent = '0% OFF';
+                label.textContent = '0%';
             }
         }
 
@@ -704,7 +755,13 @@
             document.getElementById('productModalTitle').textContent = 'Add Product';
             document.getElementById('productForm').reset();
             document.getElementById('productId').value = '';
-            document.getElementById('prodDiscountLabel').textContent = '0% OFF';
+            document.getElementById('variant-rows').innerHTML = '';
+            
+            // Image reset
+            document.getElementById('prodImagePreview').style.display = 'none';
+            document.getElementById('preview-placeholder').style.display = 'block';
+            
+            addVariantRow(); // Add one empty variant by default
             await loadAdminCategories(); // Ensure fresh list
         }
 
@@ -717,12 +774,30 @@
             document.getElementById('productModalTitle').textContent = 'Edit Product';
             document.getElementById('productId').value = p._id;
             document.getElementById('prodName').value = p.name;
-            document.getElementById('prodWeight').value = p.weight || '';
             document.getElementById('prodDesc').value = p.description || '';
-            document.getElementById('prodMrp').value = p.mrp;
-            document.getElementById('prodPrice').value = p.price;
             document.getElementById('prodImage').value = p.image || '';
             document.getElementById('prodNewTags').value = ''; // Clean new tags field
+
+            // Image preview
+            const preview = document.getElementById('prodImagePreview');
+            const placeholder = document.getElementById('preview-placeholder');
+            if (p.image) {
+                preview.src = p.image;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+            } else {
+                preview.style.display = 'none';
+                placeholder.style.display = 'block';
+            }
+
+            // Load Variants
+            document.getElementById('variant-rows').innerHTML = '';
+            if (p.variants && p.variants.length > 0) {
+                p.variants.forEach(v => addVariantRow(v));
+            } else {
+                // Backward compatibility: use top-level weight/price/mrp
+                addVariantRow({ weight: p.weight, price: p.price, mrp: p.mrp });
+            }
 
             await loadAdminCategories(); // Wait for checkboxes to render
 
@@ -731,8 +806,6 @@
             checkboxes.forEach(cb => {
                 cb.checked = (p.category || []).includes(cb.value);
             });
-
-            calculateDiscount();
         }
 
         async function deleteProduct(id) {
@@ -770,40 +843,66 @@
                 });
             }
 
-            const body = {
-                name: document.getElementById('prodName').value,
-                weight: document.getElementById('prodWeight').value,
-                description: document.getElementById('prodDesc').value,
-                mrp: parseFloat(document.getElementById('prodMrp').value),
-                price: parseFloat(document.getElementById('prodPrice').value),
-                image: document.getElementById('prodImage').value,
-                category: categories
+            const variants = [];
+            document.querySelectorAll('.variant-row').forEach(row => {
+                const weight = row.querySelector('.v-weight').value;
+                const flavor = row.querySelector('.v-flavor').value;
+                const mrp = parseFloat(row.querySelector('.v-mrp').value);
+                const price = parseFloat(row.querySelector('.v-price').value);
+                if (!isNaN(mrp) && !isNaN(price)) {
+                    variants.push({ weight, flavor, mrp, price });
+                }
+            });
+
+            // Handle Image (File or URL)
+            let imageSource = document.getElementById('prodImage').value;
+            const fileInput = document.getElementById('prodImageFile');
+            
+            const submitData = async (image) => {
+                const body = {
+                    name: document.getElementById('prodName').value,
+                    description: document.getElementById('prodDesc').value,
+                    image: image,
+                    category: categories,
+                    variants: variants,
+                    weight: variants.length > 0 ? variants[0].weight : '',
+                    mrp: variants.length > 0 ? variants[0].mrp : 0,
+                    price: variants.length > 0 ? variants[0].price : 0
+                };
+
+                const method = id ? 'PUT' : 'POST';
+                const url = (window.API_BASE_URL || '') + (id ? `/api/products/${id}` : '/api/products');
+
+                try {
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(body)
+                    });
+
+                    if (response.ok) {
+                        closeProductModal();
+                        await loadAdminProducts();
+                        await loadAdminCategories();
+                        alert(id ? 'Product updated!' : 'Product added!');
+                    } else {
+                        const data = await response.json();
+                        alert(data.error || 'Failed to save product');
+                    }
+                } catch (error) {
+                    console.error('Save error:', error);
+                }
             };
 
-            const method = id ? 'PUT' : 'POST';
-            const url = (window.API_BASE_URL || '') + (id ? `/api/products/${id}` : '/api/products');
-
-            try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(body)
-                });
-
-                if (response.ok) {
-                    closeProductModal();
-                    await loadAdminProducts();
-                    await loadAdminCategories(); // Refresh tags in case new ones were added
-                    alert(id ? 'Product updated!' : 'Product added!');
-                } else {
-                    const data = await response.json();
-                    alert(data.error || 'Failed to save product');
-                }
-            } catch (error) {
-                console.error('Save error:', error);
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (event) => submitData(event.target.result);
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                submitData(imageSource);
             }
         });
 
